@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI TT Cloud - Bắt đầu hệ thống</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #00458b 0%, #1e3c72 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #00458b;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 18px;
+        }
+
+        .workflow-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .workflow-section h2 {
+            color: #00458b;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .workflow-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border-left: 4px solid #00458b;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 69, 139, 0.1);
+        }
+
+        .step i {
+            font-size: 32px;
+            color: #00458b;
+            margin-bottom: 15px;
+        }
+
+        .step h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .start-button {
+            display: block;
+            width: 300px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #00458b 0%, #1e3c72 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(0, 69, 139, 0.3);
+        }
+
+        .start-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 69, 139, 0.4);
+        }
+
+        .system-status {
+            background: #e8f5e8;
+            border: 2px solid #4caf50;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .system-status h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .status-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .status-item i {
+            color: #4caf50;
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .status-item h4 {
+            color: #2e7d32;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .status-item p {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .demo-accounts {
+            background: #fff3e0;
+            border: 1px solid #ffb74d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .demo-accounts h4 {
+            color: #f57c00;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .account-item {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .account-item strong {
+            color: #f57c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-rocket"></i> KPI TT Cloud</h1>
+            <p>Hệ thống đo hiệu suất TT Cloud - Luồng chính thức</p>
+        </div>
+
+        <div class="system-status">
+            <h3><i class="fas fa-check-circle"></i> Trạng thái hệ thống - Sẵn sàng hoạt động</h3>
+            <div class="status-grid">
+                <div class="status-item">
+                    <i class="fas fa-server"></i>
+                    <h4>API Server</h4>
+                    <p>Port 3001</p>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-database"></i>
+                    <h4>Database</h4>
+                    <p>MySQL users_db</p>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Authentication</h4>
+                    <p>JWT Token</p>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-users"></i>
+                    <h4>User Data</h4>
+                    <p>5 users ready</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="workflow-section">
+            <h2><i class="fas fa-route"></i> Luồng hoạt động chính thức</h2>
+            <div class="workflow-steps">
+                <div class="step">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <h3>1. Đăng nhập</h3>
+                    <p>Sử dụng auth/login.html với API thực, JWT authentication</p>
+                </div>
+                <div class="step">
+                    <i class="fas fa-users"></i>
+                    <h3>2. User Management</h3>
+                    <p>Quản lý người dùng với dữ liệu thực từ database</p>
+                </div>
+                <div class="step">
+                    <i class="fas fa-tasks"></i>
+                    <h3>3. Task Management</h3>
+                    <p>Quản lý công việc và KPI (sẽ tích hợp API)</p>
+                </div>
+                <div class="step">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>4. Dashboard</h3>
+                    <p>Tổng quan hiệu suất và báo cáo</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-accounts">
+            <h4><i class="fas fa-key"></i> Tài khoản demo (sử dụng với API thực)</h4>
+            <div class="accounts-grid">
+                <div class="account-item">
+                    <strong>admin</strong> / admin123<br>
+                    <small>System Administrator</small>
+                </div>
+                <div class="account-item">
+                    <strong>cpo</strong> / cpo123<br>
+                    <small>Trần Văn A - CPO</small>
+                </div>
+                <div class="account-item">
+                    <strong>pm1</strong> / pm123<br>
+                    <small>Nguyễn Thị B - PM</small>
+                </div>
+                <div class="account-item">
+                    <strong>po1</strong> / po123<br>
+                    <small>Lê Văn C - PO</small>
+                </div>
+                <div class="account-item">
+                    <strong>dev1</strong> / dev123<br>
+                    <small>Phạm Thị D - Dev</small>
+                </div>
+            </div>
+        </div>
+
+        <a href="auth/login.html" class="start-button">
+            <i class="fas fa-play"></i> Bắt đầu hệ thống
+        </a>
+
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 14px;">
+            <p><strong>🚀 Luồng chính thức:</strong> auth/login.html → User-Management.html → Task Management → Dashboard</p>
+            <p>API: http://localhost:3001 | Database: MySQL users_db | Authentication: JWT Real</p>
+        </div>
+    </div>
+
+    <script>
+        // Check if API is running
+        async function checkAPIStatus() {
+            try {
+                const response = await fetch('http://localhost:3001/api/health');
+                if (response.ok) {
+                    console.log('✅ API Server is running');
+                } else {
+                    console.warn('⚠️ API Server responded with error');
+                }
+            } catch (error) {
+                console.error('❌ API Server is not running. Please start: cd api && npm start');
+                
+                // Show warning
+                const warning = document.createElement('div');
+                warning.style.cssText = 'position:fixed;top:20px;right:20px;background:#ff9800;color:white;padding:15px;border-radius:8px;z-index:1000;max-width:300px;';
+                warning.innerHTML = '<strong>⚠️ API Server không chạy</strong><br>Vui lòng start API: <code>cd api && npm start</code>';
+                document.body.appendChild(warning);
+                
+                setTimeout(() => warning.remove(), 10000);
+            }
+        }
+
+        // Auto-check API on page load
+        document.addEventListener('DOMContentLoaded', checkAPIStatus);
+    </script>
+</body>
+</html>

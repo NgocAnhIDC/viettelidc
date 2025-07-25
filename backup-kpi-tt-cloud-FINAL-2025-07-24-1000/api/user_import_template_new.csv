@@ -1,0 +1,47 @@
+STT,Username,Full Name,Email,Phone,Role Code,Team Code,Join Date,Is Active,Password
+1,newuser1,Nguyễn Văn A,newuser1@viettelidc.com,0123456789,DEV,T1,,true,password123
+2,newuser2,Trần Thị B,newuser2@viettelidc.com,0987654321,PM,T2,2025-01-01,true,password123
+
+# HƯỚNG DẪN SỬ DỤNG:
+# - STT: Số thứ tự (tự động tăng)
+# - Username: Tên đăng nhập (duy nhất)
+# - Full Name: Họ và tên đầy đủ
+# - Email: Địa chỉ email (duy nhất)
+# - Phone: Số điện thoại
+# - Role Code: Mã vai trò (xem danh sách bên dưới)
+# - Team Code: Mã nhóm (xem danh sách bên dưới)
+# - Join Date: Ngày gia nhập (YYYY-MM-DD hoặc M/d/yyyy) - Tùy chọn, để trống sẽ dùng ngày hiện tại
+# - Is Active: Trạng thái (true/false)
+# - Password: Mật khẩu tạm thời
+
+# DANH SÁCH VAI TRÒ:
+# ADMIN: Admin
+# CPO: CPO
+# PM: PM
+# PO: PO
+# BA: BA
+# DEV: Dev
+# TESTER: Tester
+# DEVOPS: DevOps
+# SO: SO
+# BD: BD
+# INV: NV Đầu tư
+# SM: SM
+# BU_LEAD: Trưởng BU
+# ADMIN_STAFF: Hành chính tổng hợp
+
+# DANH SÁCH NHÓM:
+# T1: Cloud VCF (CVCF) (VMW)
+# T2: Cloud Storage & Data Protection (CSDP) (VMW)
+# T3: Cloud Network & Security (CNS) (VMW)
+# T4: Open Cloud (OPS)
+# T5: Open Platform (OPS)
+# T6: CMP (OPS)
+# T7: DepOps (OPS)
+# T8: Productivity (SaaS)
+# T9: MultiCDN (SaaS)
+# T10: Cloud Camera (SaaS)
+# T11: BSS (CĐS)
+# T12: OSS (CĐS)
+# T13: DMP (CĐS)
+# T14: Support (KHSP)

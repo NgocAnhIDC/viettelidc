@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI TT Cloud - Microservice Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+        .diagram-container {
+            text-align: center;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .info-box {
+            background: #ecf0f1;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .info-box h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .specs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .spec-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .spec-card h4 {
+            color: #e74c3c;
+            margin-top: 0;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 10px;
+        }
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .print-btn:hover {
+            background: #2980b9;
+        }
+        @media print {
+            .print-btn { display: none; }
+            body { background: white; }
+            .container { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-btn" onclick="window.print()">🖨️ In PDF</button>
+    
+    <div class="container">
+        <h1>🏗️ KPI TT Cloud System</h1>
+        <p class="subtitle">Kiến trúc Microservice với Dashboard Analytics</p>
+        
+        <div class="info-box">
+            <h3>📊 Tổng quan hệ thống</h3>
+            <p><strong>Khả năng chịu tải:</strong> 500 concurrent users</p>
+            <p><strong>Kiến trúc:</strong> Microservice với Docker deployment</p>
+            <p><strong>Database:</strong> MySQL Master-Slave Cluster</p>
+            <p><strong>Caching:</strong> Redis Cluster</p>
+            <p><strong>Message Queue:</strong> RabbitMQ</p>
+        </div>
+
+        <div class="diagram-container">
+            <div class="mermaid">
+graph TB
+    %% Client Layer
+    subgraph "Client Layer"
+        WEB[Web Dashboard UI]
+        MOBILE[Mobile Dashboard App]
+        API_CLIENT[API Clients]
+    end
+
+    %% API Gateway & Load Balancer
+    subgraph "Gateway Layer"
+        LB[Load Balancer<br/>Nginx/HAProxy]
+        GATEWAY[API Gateway<br/>Kong/Zuul]
+        AUTH[Authentication Service<br/>JWT + OAuth2]
+    end
+
+    %% Core Microservices Layer
+    subgraph "Core Microservices"
+        USER_SVC[User Management Service<br/>Port: 3001]
+        TASK_SVC[Task Management Service<br/>Port: 3002]
+        REVENUE_SVC[Revenue Management Service<br/>Port: 3003]
+        QOS_SVC[Quality of Service Management<br/>Port: 3004]
+        TRAINING_SVC[Training Management Service<br/>Port: 3005]
+        COMPLIANCE_SVC[Compliance Management Service<br/>Port: 3006]
+    end
+
+    %% KPI Processing Services
+    subgraph "KPI Processing Layer"
+        KPI_TASK[KPI Task Calculator<br/>Port: 4001]
+        KPI_REVENUE[KPI Revenue Calculator<br/>Port: 4002]
+        KPI_QOS[KPI Quality Calculator<br/>Port: 4003]
+        KPI_TRAINING[KPI Training Calculator<br/>Port: 4004]
+        KPI_COMPLIANCE[KPI Compliance Calculator<br/>Port: 4005]
+        KPI_TEAM[KPI Team Aggregator<br/>Port: 4006]
+        KPI_PERSONAL[KPI Personal Calculator<br/>Port: 4007]
+    end
+
+    %% Dashboard & Analytics Layer
+    subgraph "Dashboard & Analytics Layer"
+        DASHBOARD_SVC[Dashboard Service<br/>Port: 6001]
+        ANALYTICS_SVC[Analytics Engine<br/>Port: 6002]
+        CHART_SVC[Chart Generator Service<br/>Port: 6003]
+        EXPORT_SVC[Export Service<br/>Port: 6004]
+    end
+
+    %% Supporting Services
+    subgraph "Supporting Services"
+        NOTIFICATION[Notification Service<br/>Port: 5001]
+        REPORT[Report Generator<br/>Port: 5002]
+        FILE_SVC[File Management Service<br/>Port: 5003]
+        CACHE[Redis Cache Cluster]
+        QUEUE[Message Queue<br/>RabbitMQ/Kafka]
+    end
+
+    %% Database Layer
+    subgraph "Database Layer"
+        subgraph "MySQL Cluster"
+            DB_USER[(User DB)]
+            DB_TASK[(Task DB)]
+            DB_REVENUE[(Revenue DB)]
+            DB_QOS[(QoS DB)]
+            DB_TRAINING[(Training DB)]
+            DB_COMPLIANCE[(Compliance DB)]
+            DB_KPI[(KPI Analytics DB)]
+            DB_DASHBOARD[(Dashboard Config DB)]
+        end
+    end
+
+    %% Connections - Client to Gateway
+    WEB --> LB
+    MOBILE --> LB
+    API_CLIENT --> LB
+    LB --> GATEWAY
+    GATEWAY --> AUTH
+
+    %% Gateway to Core Services
+    GATEWAY --> USER_SVC
+    GATEWAY --> TASK_SVC
+    GATEWAY --> REVENUE_SVC
+    GATEWAY --> QOS_SVC
+    GATEWAY --> TRAINING_SVC
+    GATEWAY --> COMPLIANCE_SVC
+
+    %% Gateway to Dashboard Services
+    GATEWAY --> DASHBOARD_SVC
+    GATEWAY --> ANALYTICS_SVC
+    GATEWAY --> CHART_SVC
+    GATEWAY --> EXPORT_SVC
+
+    %% Core Services to KPI Calculators
+    TASK_SVC --> KPI_TASK
+    REVENUE_SVC --> KPI_REVENUE
+    QOS_SVC --> KPI_QOS
+    TRAINING_SVC --> KPI_TRAINING
+    COMPLIANCE_SVC --> KPI_COMPLIANCE
+
+    %% KPI Aggregation Flow
+    KPI_TASK --> KPI_TEAM
+    KPI_REVENUE --> KPI_TEAM
+    KPI_QOS --> KPI_TEAM
+    KPI_TRAINING --> KPI_TEAM
+    KPI_COMPLIANCE --> KPI_TEAM
+    KPI_TEAM --> KPI_PERSONAL
+
+    %% Dashboard Integration
+    KPI_TEAM --> DASHBOARD_SVC
+    KPI_PERSONAL --> DASHBOARD_SVC
+    KPI_TASK --> ANALYTICS_SVC
+    KPI_REVENUE --> ANALYTICS_SVC
+    KPI_QOS --> ANALYTICS_SVC
+    KPI_TRAINING --> ANALYTICS_SVC
+    KPI_COMPLIANCE --> ANALYTICS_SVC
+
+    %% Dashboard Services Integration
+    DASHBOARD_SVC --> ANALYTICS_SVC
+    DASHBOARD_SVC --> CHART_SVC
+    DASHBOARD_SVC --> EXPORT_SVC
+    ANALYTICS_SVC --> CHART_SVC
+
+    %% Services to Database
+    USER_SVC --> DB_USER
+    TASK_SVC --> DB_TASK
+    REVENUE_SVC --> DB_REVENUE
+    QOS_SVC --> DB_QOS
+    TRAINING_SVC --> DB_TRAINING
+    COMPLIANCE_SVC --> DB_COMPLIANCE
+    
+    KPI_TASK --> DB_KPI
+    KPI_REVENUE --> DB_KPI
+    KPI_QOS --> DB_KPI
+    KPI_TRAINING --> DB_KPI
+    KPI_COMPLIANCE --> DB_KPI
+    KPI_TEAM --> DB_KPI
+    KPI_PERSONAL --> DB_KPI
+
+    %% Dashboard Database
+    DASHBOARD_SVC --> DB_DASHBOARD
+    ANALYTICS_SVC --> DB_KPI
+    CHART_SVC --> DB_KPI
+
+    %% Supporting Services Connections
+    QUEUE --> NOTIFICATION
+    QUEUE --> REPORT
+    CACHE --> USER_SVC
+    CACHE --> TASK_SVC
+    CACHE --> KPI_TEAM
+    CACHE --> KPI_PERSONAL
+    CACHE --> DASHBOARD_SVC
+    CACHE --> ANALYTICS_SVC
+
+    %% Styling
+    classDef clientStyle fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef gatewayStyle fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef serviceStyle fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef kpiStyle fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef dashboardStyle fill:#ffebee,stroke:#c62828,stroke-width:3px
+    classDef dbStyle fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef supportStyle fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+
+    class WEB,MOBILE,API_CLIENT clientStyle
+    class LB,GATEWAY,AUTH gatewayStyle
+    class USER_SVC,TASK_SVC,REVENUE_SVC,QOS_SVC,TRAINING_SVC,COMPLIANCE_SVC serviceStyle
+    class KPI_TASK,KPI_REVENUE,KPI_QOS,KPI_TRAINING,KPI_COMPLIANCE,KPI_TEAM,KPI_PERSONAL kpiStyle
+    class DASHBOARD_SVC,ANALYTICS_SVC,CHART_SVC,EXPORT_SVC dashboardStyle
+    class DB_USER,DB_TASK,DB_REVENUE,DB_QOS,DB_TRAINING,DB_COMPLIANCE,DB_KPI,DB_DASHBOARD dbStyle
+    class NOTIFICATION,REPORT,FILE_SVC,CACHE,QUEUE supportStyle
+            </div>
+        </div>
+
+        <div class="specs">
+            <div class="spec-card">
+                <h4>🎯 Core Services</h4>
+                <ul>
+                    <li>User Management (3 replicas)</li>
+                    <li>Task Management (4 replicas)</li>
+                    <li>Revenue Management (2 replicas)</li>
+                    <li>Quality of Service (2 replicas)</li>
+                    <li>Training Management (2 replicas)</li>
+                    <li>Compliance Management (2 replicas)</li>
+                </ul>
+            </div>
+            
+            <div class="spec-card">
+                <h4>📊 KPI Processing</h4>
+                <ul>
+                    <li>KPI Task Calculator (3 replicas)</li>
+                    <li>KPI Revenue Calculator (2 replicas)</li>
+                    <li>KPI Quality Calculator (2 replicas)</li>
+                    <li>KPI Training Calculator (2 replicas)</li>
+                    <li>KPI Compliance Calculator (2 replicas)</li>
+                    <li>KPI Team Aggregator (3 replicas)</li>
+                    <li>KPI Personal Calculator (3 replicas)</li>
+                </ul>
+            </div>
+            
+            <div class="spec-card">
+                <h4>🖥️ Dashboard Layer</h4>
+                <ul>
+                    <li>Dashboard Service (3 replicas)</li>
+                    <li>Analytics Engine (2 replicas)</li>
+                    <li>Chart Generator (2 replicas)</li>
+                    <li>Export Service (2 replicas)</li>
+                </ul>
+            </div>
+            
+            <div class="spec-card">
+                <h4>💾 Database Cluster</h4>
+                <ul>
+                    <li>MySQL Master-Slave</li>
+                    <li>8 Specialized Databases</li>
+                    <li>Redis Cache Cluster</li>
+                    <li>RabbitMQ Message Queue</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>⚡ Performance Specifications</h3>
+            <p><strong>Total CPU:</strong> ~75 cores</p>
+            <p><strong>Total RAM:</strong> ~140GB</p>
+            <p><strong>Storage:</strong> ~2.1TB SSD</p>
+            <p><strong>Concurrent Users:</strong> 500 users</p>
+            <p><strong>Services:</strong> 17 microservices</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html>

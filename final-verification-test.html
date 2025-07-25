@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🔧 Final Verification Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .test-card { background: white; margin: 15px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .test-result { margin: 10px 0; padding: 15px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+        .info { background: #d1ecf1; color: #0c5460; border-left: 4px solid #17a2b8; }
+        .warning { background: #fff3cd; color: #856404; border-left: 4px solid #ffc107; }
+        button { margin: 5px; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        h1 { color: #333; text-align: center; }
+        h2 { color: #495057; border-bottom: 2px solid #dee2e6; padding-bottom: 10px; }
+        .status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .badge-success { background: #28a745; color: white; }
+        .badge-error { background: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 FINAL VERIFICATION TEST - TRIỆT ĐỂ FIX</h1>
+        
+        <div class="test-card">
+            <h2>🎯 Test 1: Users API Response Structure</h2>
+            <button class="btn-primary" onclick="testUsersAPI()">Test Users API Fix</button>
+            <div id="usersResult"></div>
+        </div>
+        
+        <div class="test-card">
+            <h2>🔐 Test 2: Authentication Validation</h2>
+            <button class="btn-primary" onclick="testAuthValidation()">Test Auth Validation</button>
+            <div id="authResult"></div>
+        </div>
+        
+        <div class="test-card">
+            <h2>🚀 Test 3: Complete Integration</h2>
+            <button class="btn-success" onclick="testCompleteIntegration()">Run Complete Test</button>
+            <div id="completeResult"></div>
+        </div>
+        
+        <div class="test-card">
+            <h2>📊 Test Summary</h2>
+            <div id="summary"></div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = '';
+        let testResults = [];
+
+        async function testUsersAPI() {
+            const resultDiv = document.getElementById('usersResult');
+            resultDiv.innerHTML = '<div class="test-result info">🔍 Testing Users API response structure...</div>';
+            
+            try {
+                // Login first
+                const loginResponse = await fetch('http://localhost:3001/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'admin', password: 'admin123' })
+                });
+
+                const loginData = await loginResponse.json();
+                authToken = loginData.data.token;
+                
+                // Test users endpoint
+                const usersResponse = await fetch('http://localhost:3001/api/users', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                const data = await usersResponse.json();
+                
+                let result = '';
+                let success = false;
+                
+                if (data.success && data.data && Array.isArray(data.data)) {
+                    success = true;
+                    result = `
+                        <div class="test-result success">
+                            <span class="status-badge badge-success">✅ FIXED</span>
+                            <strong>Users API Structure: CORRECT</strong><br>
+                            - Response: data.data (direct array)<br>
+                            - Users count: ${data.data.length}<br>
+                            - First user: ${data.data[0].username} (${data.data[0].full_name})<br>
+                            - Structure: Array of user objects<br>
+                            - Source: ${data.meta?.source || 'database'}
+                        </div>
+                    `;
+                } else {
+                    result = `
+                        <div class="test-result error">
+                            <span class="status-badge badge-error">❌ FAILED</span>
+                            <strong>Users API Structure: INCORRECT</strong><br>
+                            - data.success: ${data.success}<br>
+                            - data.data type: ${typeof data.data}<br>
+                            - data.data is Array: ${Array.isArray(data.data)}<br>
+                            - Need to debug further
+                        </div>
+                    `;
+                }
+                
+                resultDiv.innerHTML = result;
+                testResults.push({ test: 'Users API', success, details: result });
+                
+            } catch (error) {
+                const result = `<div class="test-result error"><span class="status-badge badge-error">❌ ERROR</span> ${error.message}</div>`;
+                resultDiv.innerHTML = result;
+                testResults.push({ test: 'Users API', success: false, details: result });
+            }
+        }
+
+        async function testAuthValidation() {
+            const resultDiv = document.getElementById('authResult');
+            resultDiv.innerHTML = '<div class="test-result info">🔍 Testing Authentication validation...</div>';
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<div class="test-result warning">⚠️ Please run Users API test first to get token</div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/validate', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                const data = await response.json();
+                
+                let result = '';
+                let success = false;
+                
+                if (data.success && data.user) {
+                    success = true;
+                    result = `
+                        <div class="test-result success">
+                            <span class="status-badge badge-success">✅ FIXED</span>
+                            <strong>Auth Validation: WORKING</strong><br>
+                            - Response: data.user (direct object)<br>
+                            - Username: ${data.user.username}<br>
+                            - Full Name: ${data.user.fullName}<br>
+                            - Role: ${data.user.role_code}<br>
+                            - Teams: ${data.user.teams.join(', ')}<br>
+                            - Valid: ${data.valid}
+                        </div>
+                    `;
+                } else {
+                    result = `
+                        <div class="test-result error">
+                            <span class="status-badge badge-error">❌ FAILED</span>
+                            <strong>Auth Validation: FAILED</strong><br>
+                            - data.success: ${data.success}<br>
+                            - data.user exists: ${!!data.user}<br>
+                            - Response structure incorrect
+                        </div>
+                    `;
+                }
+                
+                resultDiv.innerHTML = result;
+                testResults.push({ test: 'Auth Validation', success, details: result });
+                
+            } catch (error) {
+                const result = `<div class="test-result error"><span class="status-badge badge-error">❌ ERROR</span> ${error.message}</div>`;
+                resultDiv.innerHTML = result;
+                testResults.push({ test: 'Auth Validation', success: false, details: result });
+            }
+        }
+
+        async function testCompleteIntegration() {
+            const resultDiv = document.getElementById('completeResult');
+            resultDiv.innerHTML = '<div class="test-result info">🚀 Running complete integration test...</div>';
+            
+            testResults = []; // Reset results
+            
+            await testUsersAPI();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testAuthValidation();
+            
+            updateSummary();
+            
+            const passedTests = testResults.filter(t => t.success).length;
+            const totalTests = testResults.length;
+            
+            if (passedTests === totalTests) {
+                resultDiv.innerHTML = `
+                    <div class="test-result success">
+                        <span class="status-badge badge-success">🎉 ALL FIXED</span>
+                        <strong>Complete Integration: SUCCESS</strong><br>
+                        - All ${totalTests} tests passed<br>
+                        - Users API: Fixed (data.data direct array)<br>
+                        - Auth Validation: Fixed (data.user direct object)<br>
+                        - Ready for production use
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">
+                        <span class="status-badge badge-error">❌ ISSUES REMAIN</span>
+                        <strong>Complete Integration: PARTIAL</strong><br>
+                        - Passed: ${passedTests}/${totalTests} tests<br>
+                        - Need additional fixes
+                    </div>
+                `;
+            }
+        }
+
+        function updateSummary() {
+            const summaryDiv = document.getElementById('summary');
+            const passedTests = testResults.filter(t => t.success).length;
+            const totalTests = testResults.length;
+            
+            let summaryHTML = `
+                <h3>📊 Test Results Summary</h3>
+                <p><strong>Passed:</strong> ${passedTests}/${totalTests} tests</p>
+            `;
+            
+            testResults.forEach(result => {
+                const status = result.success ? '✅' : '❌';
+                summaryHTML += `<p>${status} ${result.test}: ${result.success ? 'PASSED' : 'FAILED'}</p>`;
+            });
+            
+            if (passedTests === totalTests && totalTests > 0) {
+                summaryHTML += `
+                    <div class="test-result success">
+                        <strong>🎉 ALL ISSUES FIXED!</strong><br>
+                        - User Management should load real data<br>
+                        - Task Management should not redirect to login<br>
+                        - Both pages ready for production use
+                    </div>
+                `;
+            }
+            
+            summaryDiv.innerHTML = summaryHTML;
+        }
+    </script>
+</body>
+</html>

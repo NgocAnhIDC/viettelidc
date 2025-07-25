@@ -1,0 +1,205 @@
+{
+  "userManagementPermissions": {
+    "ADMIN": {
+      "canViewUsers": true,
+      "canCreateUser": true,
+      "canEditUser": true,
+      "canDeleteUser": true,
+      "canChangePassword": true,
+      "canImportUsers": true,
+      "canDownloadTemplate": true,
+      "canBulkDelete": true,
+      "scope": "all",
+      "description": "Full administrative access to all user management functions"
+    },
+    "ADMIN_STAFF": {
+      "canViewUsers": true,
+      "canCreateUser": true,
+      "canEditUser": true,
+      "canDeleteUser": true,
+      "canChangePassword": true,
+      "canImportUsers": true,
+      "canDownloadTemplate": true,
+      "canBulkDelete": true,
+      "scope": "all",
+      "description": "Full administrative access to all user management functions (same as ADMIN)"
+    },
+    "CPO": {
+      "canViewUsers": true,
+      "canCreateUser": false,
+      "canEditUser": false,
+      "canDeleteUser": false,
+      "canChangePassword": false,
+      "canImportUsers": false,
+      "canDownloadTemplate": false,
+      "canBulkDelete": false,
+      "scope": "all",
+      "description": "View-only access to user information"
+    },
+    "PM": {
+      "canViewUsers": true,
+      "canCreateUser": false,
+      "canEditUser": false,
+      "canDeleteUser": false,
+      "canChangePassword": false,
+      "canImportUsers": false,
+      "canDownloadTemplate": false,
+      "canBulkDelete": false,
+      "scope": "all",
+      "description": "View-only access to user information"
+    },
+    "PO": {
+      "canViewUsers": true,
+      "canCreateUser": false,
+      "canEditUser": false,
+      "canDeleteUser": false,
+      "canChangePassword": false,
+      "canImportUsers": false,
+      "canDownloadTemplate": false,
+      "canBulkDelete": false,
+      "scope": "all",
+      "description": "View-only access to user information"
+    },
+    "SM": {
+      "canViewUsers": true,
+      "canCreateUser": false,
+      "canEditUser": false,
+      "canDeleteUser": false,
+      "canChangePassword": false,
+      "canImportUsers": false,
+      "canDownloadTemplate": false,
+      "canBulkDelete": false,
+      "scope": "all",
+      "description": "View-only access to user information"
+    },
+    "BU_LEAD": {
+      "canViewUsers": true,
+      "canCreateUser": false,
+      "canEditUser": false,
+      "canDeleteUser": false,
+      "canChangePassword": false,
+      "canImportUsers": false,
+      "canDownloadTemplate": false,
+      "canBulkDelete": false,
+      "scope": "all",
+      "description": "View-only access to user information"
+    },
+    "BD": {
+      "canViewUsers": true,
+      "canCreateUser": false,
+      "canEditUser": false,
+      "canDeleteUser": false,
+      "canChangePassword": false,
+      "canImportUsers": false,
+      "canDownloadTemplate": false,
+      "canBulkDelete": false,
+      "scope": "all",
+      "description": "View-only access to user information"
+    },
+    "INV": {
+      "canViewUsers": true,
+      "canCreateUser": false,
+      "canEditUser": false,
+      "canDeleteUser": false,
+      "canChangePassword": false,
+      "canImportUsers": false,
+      "canDownloadTemplate": false,
+      "canBulkDelete": false,
+      "scope": "all",
+      "description": "View-only access to user information"
+    },
+    "BA": {
+      "canViewUsers": true,
+      "canCreateUser": false,
+      "canEditUser": false,
+      "canDeleteUser": false,
+      "canChangePassword": false,
+      "canImportUsers": false,
+      "canDownloadTemplate": false,
+      "canBulkDelete": false,
+      "scope": "all",
+      "description": "View-only access to user information"
+    },
+    "DEV": {
+      "canViewUsers": true,
+      "canCreateUser": false,
+      "canEditUser": false,
+      "canDeleteUser": false,
+      "canChangePassword": false,
+      "canImportUsers": false,
+      "canDownloadTemplate": false,
+      "canBulkDelete": false,
+      "scope": "all",
+      "description": "View-only access to user information"
+    },
+    "TESTER": {
+      "canViewUsers": true,
+      "canCreateUser": false,
+      "canEditUser": false,
+      "canDeleteUser": false,
+      "canChangePassword": false,
+      "canImportUsers": false,
+      "canDownloadTemplate": false,
+      "canBulkDelete": false,
+      "scope": "all",
+      "description": "View-only access to user information"
+    },
+    "DEVOPS": {
+      "canViewUsers": true,
+      "canCreateUser": false,
+      "canEditUser": false,
+      "canDeleteUser": false,
+      "canChangePassword": false,
+      "canImportUsers": false,
+      "canDownloadTemplate": false,
+      "canBulkDelete": false,
+      "scope": "all",
+      "description": "View-only access to user information"
+    },
+    "SO": {
+      "canViewUsers": true,
+      "canCreateUser": false,
+      "canEditUser": false,
+      "canDeleteUser": false,
+      "canChangePassword": false,
+      "canImportUsers": false,
+      "canDownloadTemplate": false,
+      "canBulkDelete": false,
+      "scope": "all",
+      "description": "View-only access to user information"
+    }
+  },
+  "scopeDefinitions": {
+    "all": "Can access all users in the system"
+  },
+  "permissionLevels": {
+    "ADMIN_LEVEL": {
+      "roles": ["ADMIN", "ADMIN_STAFF"],
+      "description": "Full administrative access to all user management functions",
+      "capabilities": [
+        "View all users",
+        "Create new users",
+        "Edit user information",
+        "Delete users (soft delete)",
+        "Change user passwords",
+        "Import users from CSV",
+        "Download user templates",
+        "Bulk delete operations"
+      ]
+    },
+    "VIEW_ONLY_LEVEL": {
+      "roles": ["CPO", "PM", "PO", "SM", "BU_LEAD", "BD", "INV", "BA", "DEV", "TESTER", "DEVOPS", "SO"],
+      "description": "Read-only access to user information",
+      "capabilities": [
+        "View all users",
+        "View user details"
+      ]
+    }
+  },
+  "metadata": {
+    "version": "2.0",
+    "last_updated": "2025-01-22",
+    "updated_by": "admin",
+    "description": "Simplified User Management Permissions: ADMIN/ADMIN_STAFF have full access, all others are view-only"
+  }
+}

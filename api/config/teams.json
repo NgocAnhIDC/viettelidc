@@ -1,0 +1,173 @@
+{
+  "teams": [
+    {
+      "id": 1,
+      "team_code": "T1",
+      "team_name": "Cloud VCF (CVCF)",
+      "layer": "VMW",
+      "description": "Cloud VCF Team",
+      "manager_id": null,
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "team_code": "T2",
+      "team_name": "Cloud Storage & Data Protection (CSDP)",
+      "layer": "VMW",
+      "description": "Cloud Storage & Data Protection",
+      "manager_id": null,
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "team_code": "T3",
+      "team_name": "Cloud Network & Security (CNS)",
+      "layer": "VMW",
+      "description": "Cloud Network & Security",
+      "manager_id": null,
+      "is_active": true
+    },
+    {
+      "id": 4,
+      "team_code": "T4",
+      "team_name": "Open Cloud",
+      "layer": "OPS",
+      "description": "Open Cloud",
+      "manager_id": null,
+      "is_active": true
+    },
+    {
+      "id": 5,
+      "team_code": "T5",
+      "team_name": "Open Platform",
+      "layer": "OPS",
+      "description": "Open Platform",
+      "manager_id": null,
+      "is_active": true
+    },
+    {
+      "id": 6,
+      "team_code": "T6",
+      "team_name": "CMP",
+      "layer": "OPS",
+      "description": "CMP",
+      "manager_id": null,
+      "is_active": true
+    },
+    {
+      "id": 7,
+      "team_code": "T7",
+      "team_name": "DevOps",
+      "layer": "OPS",
+      "description": "DevOps",
+      "manager_id": null,
+      "is_active": true
+    },
+    {
+      "id": 8,
+      "team_code": "T8",
+      "team_name": "Productivity",
+      "layer": "SaaS",
+      "description": "Productivity",
+      "manager_id": null,
+      "is_active": true
+    },
+    {
+      "id": 9,
+      "team_code": "T9",
+      "team_name": "MultiCDN",
+      "layer": "SaaS",
+      "description": "MultiCDN",
+      "manager_id": null,
+      "is_active": true
+    },
+    {
+      "id": 10,
+      "team_code": "T10",
+      "team_name": "Cloud Camera",
+      "layer": "SaaS",
+      "description": "Cloud Camera",
+      "manager_id": null,
+      "is_active": true
+    },
+    {
+      "id": 11,
+      "team_code": "T11",
+      "team_name": "BSS",
+      "layer": "CĐS",
+      "description": "Business Support System",
+      "manager_id": null,
+      "is_active": true
+    },
+    {
+      "id": 12,
+      "team_code": "T12",
+      "team_name": "OSS",
+      "layer": "CĐS",
+      "description": "Operation Support System",
+      "manager_id": null,
+      "is_active": true
+    },
+    {
+      "id": 13,
+      "team_code": "T13",
+      "team_name": "DMP",
+      "layer": "CĐS",
+      "description": "Data Management Platform",
+      "manager_id": null,
+      "is_active": true
+    },
+    {
+      "id": 14,
+      "team_code": "T14",
+      "team_name": "Support",
+      "layer": "KHSP",
+      "description": "Support",
+      "manager_id": null,
+      "is_active": true
+    }
+  ],
+  "layers": [
+    {
+      "id": 1,
+      "layer_code": "VMW",
+      "layer_name": "Vmware",
+      "description": "BU Vmware",
+      "order": 1
+    },
+    {
+      "id": 2,
+      "layer_code": "OPS",
+      "layer_name": "Openstack",
+      "description": "BU Openstack",
+      "order": 2
+    },
+    {
+      "id": 3,
+      "layer_code": "SaaS",
+      "layer_name": "Software as a Service",
+      "description": "BU SaaS",
+      "order": 3
+    },
+    {
+      "id": 4,
+      "layer_code": "CĐS",
+      "layer_name": "Chuyển đổi số",
+      "description": "BU Chuyển đổi số",
+      "order": 4
+    },
+    {
+      "id": 5,
+      "layer_code": "Support",
+      "layer_name": "Support",
+      "description": "BU KHSP",
+      "order": 5
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2024-12-17",
+    "updated_by": "admin",
+    "description": "KPI TT Cloud System Teams Configuration"
+  }
+}

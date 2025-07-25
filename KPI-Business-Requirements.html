@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI TT Cloud - Business Requirements</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: #e74c3c;
+            border-left: 4px solid #e74c3c;
+            padding-left: 15px;
+            margin-top: 40px;
+            font-size: 1.8em;
+        }
+        h3 {
+            color: #8e44ad;
+            margin-top: 30px;
+            font-size: 1.4em;
+        }
+        h4 {
+            color: #27ae60;
+            margin-top: 25px;
+            font-size: 1.2em;
+        }
+        .overview-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .overview-box h3 {
+            color: white;
+            margin-top: 0;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .info-card {
+            background: #ecf0f1;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .info-card h4 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #34495e;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .formula-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        .warning-box {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .success-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .team-card {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .team-card.iaas { background: #e74c3c; }
+        .team-card.paas { background: #f39c12; }
+        .team-card.software { background: #27ae60; }
+        .team-card.manage { background: #9b59b6; }
+        ul, ol {
+            padding-left: 25px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .toc {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .toc h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .toc li {
+            margin: 5px 0;
+        }
+        .toc a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .print-btn:hover {
+            background: #0056b3;
+        }
+        @media print {
+            .print-btn { display: none; }
+            body { background: white; }
+            .container { box-shadow: none; }
+        }
+        .microservice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .microservice-card {
+            background: #6c757d;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .microservice-card.core { background: #28a745; }
+        .microservice-card.kpi { background: #fd7e14; }
+        .microservice-card.dashboard { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <button class="print-btn" onclick="window.print()">🖨️ In PDF</button>
+    
+    <div class="container">
+        <h1>📋 KPI TT Cloud - Business Requirements</h1>
+        
+        <div class="overview-box">
+            <h3>📖 Tổng quan Hệ thống</h3>
+            <p><strong>Tên hệ thống:</strong> KPI TT Cloud</p>
+            <p><strong>Mục đích:</strong> Quản lý và đánh giá hiệu suất làm việc của 14 teams agile thuộc Trung tâm Cloud</p>
+            <p><strong>Phạm vi:</strong> Quản lý công việc, doanh thu, chất lượng dịch vụ, đào tạo, tuân thủ và tính toán KPI</p>
+            <p><strong>Người dùng:</strong> 500 concurrent users</p>
+        </div>
+
+        <div class="toc">
+            <h3>📑 Mục lục</h3>
+            <ul>
+                <li><a href="#organization">🏢 Cấu trúc Tổ chức</a></li>
+                <li><a href="#user-management">👥 User Management</a></li>
+                <li><a href="#task-management">📋 Task Management</a></li>
+                <li><a href="#revenue-management">💰 Revenue Management</a></li>
+                <li><a href="#quality-management">🎯 Quality of Service</a></li>
+                <li><a href="#training-management">📚 Training Management</a></li>
+                <li><a href="#compliance-management">⚖️ Compliance Management</a></li>
+                <li><a href="#kpi-processing">📊 KPI Processing</a></li>
+                <li><a href="#dashboard">🖥️ Dashboard Requirements</a></li>
+                <li><a href="#configuration">⚙️ Configuration Management</a></li>
+                <li><a href="#technical">🔧 Technical Requirements</a></li>
+            </ul>
+        </div>
+
+        <h2 id="organization">🏢 Cấu trúc Tổ chức</h2>
+        
+        <h3>Hierarchy</h3>
+        <div class="formula-box">
+            CPO (Chief Product Officer) → Agile Teams (PM, PO, Team members)
+        </div>
+
+        <h3>14 Teams Agile (4 lớp)</h3>
+        <div class="team-grid">
+            <div class="team-card iaas">IaaS Layer</div>
+            <div class="team-card">Team 1: Public Cloud Vmware</div>
+            <div class="team-card">Team 2: Public Cloud Openstack</div>
+            <div class="team-card">Team 3: Private Cloud</div>
+            <div class="team-card">Team 4: Storage</div>
+            <div class="team-card">Team 5: Network</div>
+
+            <div class="team-card paas">PaaS Layer</div>
+            <div class="team-card">Team 6: DevOps</div>
+            <div class="team-card">Team 7: K8S</div>
+            <div class="team-card">Team 8: DB</div>
+            <div class="team-card">Team 9: Cloudwatch</div>
+            <div class="team-card">Team 10: CMP</div>
+
+            <div class="team-card software">Software Layer</div>
+            <div class="team-card">Team 11: ATM</div>
+            <div class="team-card">Team 12: CRM</div>
+            <div class="team-card">Team 13: DMP</div>
+
+            <div class="team-card manage">Manage Layer</div>
+            <div class="team-card">Team 14: Manage</div>
+        </div>
+
+        <div class="success-box">
+            <h4>Đặc điểm</h4>
+            <ul>
+                <li>Một người có thể tham gia nhiều team</li>
+                <li>Một người có thể có nhiều roles</li>
+                <li>Team có PM, PO là leader</li>
+            </ul>
+        </div>
+
+        <h2 id="user-management">👥 User Management Requirements</h2>
+        
+        <h3>Roles và Permissions</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Role</th>
+                    <th>Quyền</th>
+                    <th>Phạm vi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Admin</td>
+                    <td>Xem, tạo, sửa, xóa, phê duyệt</td>
+                    <td>Toàn hệ thống</td>
+                </tr>
+                <tr>
+                    <td>CPO</td>
+                    <td>Xem, sửa</td>
+                    <td>Toàn hệ thống</td>
+                </tr>
+                <tr>
+                    <td>PM, PO</td>
+                    <td>Xem, tạo, sửa</td>
+                    <td>Theo team</td>
+                </tr>
+                <tr>
+                    <td>BA, Dev, Tester, DevOps</td>
+                    <td>Xem</td>
+                    <td>Toàn hệ thống</td>
+                </tr>
+                <tr>
+                    <td>SO</td>
+                    <td>Xem</td>
+                    <td>Toàn hệ thống</td>
+                </tr>
+                <tr>
+                    <td>BD, NV Đầu tư</td>
+                    <td>Xem, tạo, sửa</td>
+                    <td>Theo chức năng</td>
+                </tr>
+                <tr>
+                    <td>SM, Trưởng BU, Hành chính tổng hợp</td>
+                    <td>Xem, tạo, sửa, xóa</td>
+                    <td>Theo chức năng</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>User Information</h4>
+                <ul>
+                    <li><strong>Bắt buộc:</strong> Tên đăng nhập, Họ và tên, ngày vào làm</li>
+                    <li><strong>Optional:</strong> Ngày nghỉ việc</li>
+                    <li><strong>Lịch sử:</strong> Quản lý lịch sử thay đổi thông tin</li>
+                    <li><strong>Tích hợp:</strong> Chưa tích hợp HR/AD (future scope)</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h4>Authentication</h4>
+                <ul>
+                    <li><strong>Đăng nhập:</strong> Username/Password</li>
+                    <li><strong>Tính năng:</strong> Remember me, Forgot password</li>
+                    <li><strong>Security:</strong> Không cần 2FA</li>
+                    <li><strong>Session:</strong> Timeout 15 phút từ hành động cuối</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 id="task-management">📋 Task Management Requirements</h2>
+
+        <h3>Cấu trúc Phân cấp (Configurable)</h3>
+        <div class="formula-box">
+            Nhiệm vụ<br>
+            ├── Công việc từng tháng<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;└── Công việc cá nhân tháng
+        </div>
+
+        <h3>Loại Công việc (Configurable)</h3>
+        <ul>
+            <li>Nhiệm vụ trọng tâm (NVTT)</li>
+            <li>Nhiệm vụ kế hoạch (NVKH)</li>
+            <li>CTHĐ (Chương trình hành động)</li>
+            <li>TNKH (Trải nghiệm khách hàng)</li>
+            <li>NetBI</li>
+            <li>Đầu tư</li>
+        </ul>
+
+        <h3>Task Information Schema</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Required</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Mã Nhiệm vụ</td><td>Auto-generated</td><td>Yes</td><td>Team_abbreviation + indexes</td></tr>
+                <tr><td>Title</td><td>Text</td><td>Yes</td><td>Tên công việc</td></tr>
+                <tr><td>Team chủ trì</td><td>Dropdown</td><td>Yes</td><td>Chọn từ 14 teams</td></tr>
+                <tr><td>Tên sản phẩm/dịch vụ</td><td>Dropdown</td><td>No</td><td>Theo team</td></tr>
+                <tr><td>Loại công việc</td><td>Dropdown</td><td>Yes</td><td>Configurable list</td></tr>
+                <tr><td>Tính chất công việc</td><td>Dropdown</td><td>No</td><td>Sản phẩm mới, Tính năng mới, etc.</td></tr>
+                <tr><td>DoD</td><td>Text</td><td>Yes</td><td>Definition of Done</td></tr>
+                <tr><td>Người phụ trách</td><td>User</td><td>Yes</td><td>Assignee</td></tr>
+                <tr><td>Trạng thái</td><td>Auto</td><td>Yes</td><td>Based on progress %</td></tr>
+                <tr><td>Tiến độ</td><td>Percentage</td><td>Yes</td><td>Default 0%</td></tr>
+            </tbody>
+        </table>
+
+        <div class="warning-box">
+            <h4>⚠️ Workflow & Status</h4>
+            <ul>
+                <li><strong>Trạng thái:</strong> Chưa thực hiện (0%), Đang thực hiện (1-99%), Hoàn thành (100%)</li>
+                <li><strong>Auto-calculation:</strong> Parent status = average of children progress</li>
+                <li><strong>Approval Flow:</strong> PM/PO approve "Công việc cá nhân tháng" → CPO approve "Công việc từng tháng"</li>
+            </ul>
+        </div>
+
+        <h2 id="revenue-management">💰 Revenue Management Requirements</h2>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>Revenue Sources</h4>
+                <ul>
+                    <li><strong>Primary:</strong> Cloud services revenue</li>
+                    <li><strong>Allocation:</strong> By product per team</li>
+                    <li><strong>Type:</strong> Monthly recurring revenue</li>
+                    <li><strong>Integration:</strong> Manual input (future: CRM)</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h4>KPI Calculation</h4>
+                <div class="formula-box">
+                    (Actual Revenue / Target Revenue) × Quỹ điểm
+                </div>
+                <ul>
+                    <li><strong>Growth Rate:</strong> Month-over-month</li>
+                    <li><strong>Trend Analysis:</strong> Quarterly trends</li>
+                    <li><strong>Reporting:</strong> Real-time tracking</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 id="quality-management">🎯 Quality of Service Requirements</h2>
+
+        <h3>Quality Metrics</h3>
+        <ol>
+            <li><strong>Serious Incident Count:</strong> Number of critical incidents</li>
+            <li><strong>On-time Request Processing Rate:</strong> % of requests processed on time</li>
+            <li><strong>On-time Successful Initialization Rate:</strong> % of successful initializations on time</li>
+        </ol>
+
+        <h3>KPI Calculations</h3>
+        <div class="warning-box">
+            <h4>1. Serious Incident Rate</h4>
+            <div class="formula-box">
+                Penalty: >3 incidents/month → -20% quỹ điểm per additional incident<br>
+                Formula: Quỹ điểm × [100% - 20% × (incidents - 3)]<br>
+                Minimum: 0 points
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>2. On-time Request Processing</h4>
+                <div class="formula-box">
+                    (Actual Rate / Target Rate) × Quỹ điểm
+                </div>
+                <p>Target: Configurable in system</p>
+            </div>
+            <div class="info-card">
+                <h4>3. On-time Successful Initialization</h4>
+                <div class="formula-box">
+                    (Actual Rate / Target Rate) × Quỹ điểm
+                </div>
+                <p>Target: Configurable in system</p>
+            </div>
+        </div>
+
+        <h2 id="training-management">📚 Training Management Requirements</h2>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>Training Types (Configurable)</h4>
+                <ul>
+                    <li>Đào tạo chuyên môn</li>
+                    <li>Chứng chỉ quốc tế</li>
+                </ul>
+                <p><strong>Delivery:</strong> Internal & External<br>
+                <strong>Participation:</strong> Mandatory & Voluntary</p>
+            </div>
+            <div class="info-card">
+                <h4>KPI Calculation</h4>
+                <ul>
+                    <li><strong>International Certificates:</strong> +1 point per certificate</li>
+                    <li><strong>Internal Training:</strong> +1 point per training session</li>
+                    <li><strong>Budget Tracking:</strong> Included</li>
+                    <li><strong>Scope:</strong> Individual and team KPIs</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 id="compliance-management">⚖️ Compliance Management Requirements</h2>
+
+        <h3>Compliance Types (Configurable)</h3>
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>1. Tuân thủ nội quy (Attendance)</h4>
+                <ul>
+                    <li><strong>Metric:</strong> Number of late arrivals</li>
+                    <li><strong>Rule:</strong> Late if check-in > 8:59 AM</li>
+                    <li><strong>Data Source:</strong> Timesheet import</li>
+                    <li><strong>Penalty:</strong> -0.5 points per late arrival</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h4>2. Tuân thủ quy trình (Process)</h4>
+                <ul>
+                    <li><strong>Metric:</strong> Process violation tracking</li>
+                    <li><strong>Data Source:</strong> Manual violation reports</li>
+                    <li><strong>Process List:</strong> Configurable (add/edit/delete)</li>
+                    <li><strong>Violations:</strong> Title, QT vi phạm, Mô tả per team</li>
+                    <li><strong>Penalty:</strong> -1 point per violation</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 id="kpi-processing">📊 KPI Processing Requirements</h2>
+
+        <h3>KPI Components & Scoring</h3>
+
+        <div class="success-box">
+            <h4>🎯 Quan trọng: Mỗi KPI có quỹ điểm riêng cho từng team, được khai báo khi cấu hình hệ thống</h4>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>1. Task KPI</h4>
+                <div class="formula-box">
+                    Điểm KPI = Completion Rate × Quỹ điểm
+                </div>
+                <ul>
+                    <li><strong>Completion Rate:</strong> Average % progress of tasks</li>
+                    <li><strong>Additional:</strong> Velocity, Lead time, Cycle time</li>
+                    <li><strong>Personal Efficiency:</strong> Completion rate × weight_a + On-time delivery × weight_b</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h4>2. Revenue KPI</h4>
+                <div class="formula-box">
+                    Điểm KPI = (Actual Revenue / Target Revenue) × Quỹ điểm
+                </div>
+                <ul>
+                    <li><strong>Growth Rate:</strong> Month-over-month</li>
+                    <li><strong>Trend Analysis:</strong> Quarterly</li>
+                    <li><strong>Allocation:</strong> By team products</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>3. Quality KPI (3 components)</h4>
+                <ul>
+                    <li><strong>Serious Incidents:</strong> Penalty system (>3 = -20% per additional)</li>
+                    <li><strong>On-time Processing:</strong> (Actual/Target) × Quỹ điểm</li>
+                    <li><strong>On-time Initialization:</strong> (Actual/Target) × Quỹ điểm</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h4>4. Training KPI</h4>
+                <ul>
+                    <li><strong>International Certificates:</strong> +1 point per certificate</li>
+                    <li><strong>Internal Training:</strong> +1 point per session</li>
+                    <li><strong>Scope:</strong> Individual and team</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h4>5. Compliance KPI</h4>
+            <ul>
+                <li><strong>Late Arrivals:</strong> -0.5 points per occurrence</li>
+                <li><strong>Process Compliance:</strong> -1 point if <100%</li>
+            </ul>
+        </div>
+
+        <h3>Team KPI Aggregation</h3>
+        <div class="formula-box">
+            Team KPI = Task KPI + Revenue KPI + Quality KPI (all 3 components) + Training KPI + Compliance KPI
+        </div>
+
+        <h3>Personal KPI Formula</h3>
+        <div class="formula-box">
+            Personal KPI = Hiệu suất cá nhân × w1 +
+                          Làm việc nhóm × w2 +
+                          (10 - số lần đi muộn) × w3 +
+                          Tập trung × w4 +
+                          Dũng cảm × w5 +
+                          Cởi mở × w6 +
+                          Cam kết × w7 +
+                          Tôn trọng × w8 +
+                          Số chứng chỉ tháng
+        </div>
+
+        <div class="warning-box">
+            <h4>⚠️ Lưu ý quan trọng</h4>
+            <ul>
+                <li>Manual rating input cho các tiêu chí (Làm việc nhóm, Tập trung, etc.)</li>
+                <li>Weights (w1-w8) có thể cấu hình trong hệ thống</li>
+                <li><strong>Công thức KHÔNG áp dụng cho Team 14</strong></li>
+            </ul>
+        </div>
+
+        <h3>Ranking & KI Distribution</h3>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>Team Ranking</h4>
+                <ul>
+                    <li><strong>Method:</strong> Descending order by Team KPI score</li>
+                    <li><strong>KI Allocation:</strong> A+, A, B, C, D distributed by team rank</li>
+                    <li><strong>Configuration:</strong> KI quantities set in system</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h4>Individual Ranking</h4>
+                <ul>
+                    <li><strong>Method:</strong> Descending order by Personal KPI within team</li>
+                    <li><strong>KI Assignment:</strong> Rank #1 → Highest KI, Last rank → Lowest KI</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 id="dashboard">🖥️ Dashboard Requirements</h2>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>Real-time Features</h4>
+                <ul>
+                    <li><strong>Updates:</strong> Real-time KPI updates</li>
+                    <li><strong>Historical Data:</strong> 3-year retention</li>
+                    <li><strong>Comparisons:</strong> Previous period + same period last year</li>
+                    <li><strong>Drill-down:</strong> Team → Individual navigation</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h4>Export Capabilities</h4>
+                <ul>
+                    <li><strong>Format:</strong> PowerPoint reports</li>
+                    <li><strong>Content:</strong> Comprehensive KPI reports</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 id="configuration">⚙️ Configuration Management</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Configuration Type</th>
+                    <th>Authority</th>
+                    <th>Flexibility</th>
+                    <th>Approval Required</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Target Setting</td>
+                    <td>Trưởng BU / Hành chính tổng hợp</td>
+                    <td>Mid-period adjustments allowed</td>
+                    <td>Yes (Trưởng BU)</td>
+                </tr>
+                <tr>
+                    <td>Weight Configuration</td>
+                    <td>Trưởng BU / Hành chính tổng hợp</td>
+                    <td>Runtime adjustments</td>
+                    <td>Yes (Trưởng BU)</td>
+                </tr>
+                <tr>
+                    <td>Formula Customization</td>
+                    <td>Trưởng BU / Hành chính tổng hợp</td>
+                    <td>Custom formula input</td>
+                    <td>Yes (Trưởng BU)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="technical">🔧 Technical Requirements Summary</h2>
+
+        <h3>17 Microservices</h3>
+        <div class="microservice-grid">
+            <div class="microservice-card core">Core Services (6)</div>
+            <div class="microservice-card">User Management (3001)</div>
+            <div class="microservice-card">Task Management (3002)</div>
+            <div class="microservice-card">Revenue Management (3003)</div>
+            <div class="microservice-card">Quality of Service (3004)</div>
+            <div class="microservice-card">Training Management (3005)</div>
+            <div class="microservice-card">Compliance Management (3006)</div>
+
+            <div class="microservice-card kpi">KPI Processing (7)</div>
+            <div class="microservice-card">KPI Task Calculator (4001)</div>
+            <div class="microservice-card">KPI Revenue Calculator (4002)</div>
+            <div class="microservice-card">KPI Quality Calculator (4003)</div>
+            <div class="microservice-card">KPI Training Calculator (4004)</div>
+            <div class="microservice-card">KPI Compliance Calculator (4005)</div>
+            <div class="microservice-card">KPI Team Aggregator (4006)</div>
+            <div class="microservice-card">KPI Personal Calculator (4007)</div>
+
+            <div class="microservice-card dashboard">Dashboard & Analytics (4)</div>
+            <div class="microservice-card">Dashboard Service (6001)</div>
+            <div class="microservice-card">Analytics Engine (6002)</div>
+            <div class="microservice-card">Chart Generator (6003)</div>
+            <div class="microservice-card">Export Service (6004)</div>
+        </div>
+
+        <h3>8 Specialized Databases</h3>
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>Database List</h4>
+                <ul>
+                    <li>users_db</li>
+                    <li>tasks_db</li>
+                    <li>revenue_db</li>
+                    <li>qos_db</li>
+                    <li>training_db</li>
+                    <li>compliance_db</li>
+                    <li>kpi_analytics_db</li>
+                    <li>dashboard_config_db</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h4>Performance Targets</h4>
+                <ul>
+                    <li><strong>Concurrent Users:</strong> 500 users</li>
+                    <li><strong>Response Time:</strong> <200ms API calls</li>
+                    <li><strong>Uptime:</strong> 99.9% availability</li>
+                    <li><strong>Data Retention:</strong> 3 years historical</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="success-box">
+            <h3>🎯 Success Criteria</h3>
+            <ul>
+                <li><strong>Flexibility:</strong> Configurable formulas, weights, targets</li>
+                <li><strong>Accuracy:</strong> Precise KPI calculations</li>
+                <li><strong>Usability:</strong> Intuitive dashboard interface</li>
+                <li><strong>Scalability:</strong> Support for organizational growth</li>
+            </ul>
+        </div>
+
+        <div class="overview-box">
+            <h3>📋 Next Steps</h3>
+            <ol>
+                <li>Database Schema Design</li>
+                <li>API Specification Creation</li>
+                <li>Development Environment Setup</li>
+                <li>Core Infrastructure Implementation</li>
+            </ol>
+            <p><strong>Document Version:</strong> 1.0 | <strong>Status:</strong> Final for Development</p>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

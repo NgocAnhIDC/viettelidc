@@ -1,0 +1,248 @@
+{
+  "roles": [
+    {
+      "id": 1,
+      "role_code": "ADMIN",
+      "role_name": "Admin",
+      "description": "System Administrator",
+      "category": "Management",
+      "permissions": {
+        "canView": true,
+        "canCreate": true,
+        "canEdit": true,
+        "canDelete": true,
+        "canApprove": true,
+        "canImport": true,
+        "scope": "all"
+      },
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "role_code": "CPO",
+      "role_name": "CPO",
+      "description": "Chief Product Officer",
+      "category": "Management",
+      "permissions": {
+        "canView": true,
+        "canCreate": false,
+        "canEdit": true,
+        "canDelete": false,
+        "canApprove": true,
+        "canImport": true,
+        "scope": "all"
+      },
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "role_code": "PM",
+      "role_name": "PM",
+      "description": "Project Manager",
+      "category": "Product & Project Management",
+      "permissions": {
+        "canView": true,
+        "canCreate": true,
+        "canEdit": true,
+        "canDelete": false,
+        "canApprove": true,
+        "canImport": true,
+        "scope": "team"
+      },
+      "is_active": true
+    },
+    {
+      "id": 4,
+      "role_code": "PO",
+      "role_name": "PO",
+      "description": "Product Owner",
+      "category": "Product & Project Management",
+      "permissions": {
+        "canView": true,
+        "canCreate": true,
+        "canEdit": true,
+        "canDelete": false,
+        "canApprove": true,
+        "canImport": true,
+        "scope": "team"
+      },
+      "is_active": true
+    },
+    {
+      "id": 5,
+      "role_code": "BA",
+      "role_name": "BA",
+      "description": "Business Analyst",
+      "category": "Product & Project Management",
+      "permissions": {
+        "canView": true,
+        "canCreate": false,
+        "canEdit": false,
+        "canDelete": false,
+        "canApprove": false,
+        "canImport": false,
+        "scope": "all"
+      },
+      "is_active": true
+    },
+    {
+      "id": 6,
+      "role_code": "DEV",
+      "role_name": "Dev",
+      "description": "Developer",
+      "category": "Development & Operations",
+      "permissions": {
+        "canView": true,
+        "canCreate": false,
+        "canEdit": false,
+        "canDelete": false,
+        "canApprove": false,
+        "canImport": false,
+        "scope": "all"
+      },
+      "is_active": true
+    },
+    {
+      "id": 7,
+      "role_code": "TESTER",
+      "role_name": "Tester",
+      "description": "Quality Assurance Tester",
+      "category": "Development & Operations",
+      "permissions": {
+        "canView": true,
+        "canCreate": false,
+        "canEdit": false,
+        "canDelete": false,
+        "canApprove": false,
+        "canImport": false,
+        "scope": "all"
+      },
+      "is_active": true
+    },
+    {
+      "id": 8,
+      "role_code": "DEVOPS",
+      "role_name": "DevOps",
+      "description": "DevOps Engineer",
+      "category": "Development & Operations",
+      "permissions": {
+        "canView": true,
+        "canCreate": false,
+        "canEdit": false,
+        "canDelete": false,
+        "canApprove": false,
+        "canImport": false,
+        "scope": "all"
+      },
+      "is_active": true
+    },
+    {
+      "id": 9,
+      "role_code": "SO",
+      "role_name": "SO",
+      "description": "System Operator",
+      "category": "Development & Operations",
+      "permissions": {
+        "canView": true,
+        "canCreate": false,
+        "canEdit": false,
+        "canDelete": false,
+        "canApprove": false,
+        "canImport": false,
+        "scope": "all"
+      },
+      "is_active": true
+    },
+    {
+      "id": 10,
+      "role_code": "BD",
+      "role_name": "BD",
+      "description": "Business Development",
+      "category": "Business & Support",
+      "permissions": {
+        "canView": true,
+        "canCreate": true,
+        "canEdit": true,
+        "canDelete": false,
+        "canApprove": false,
+        "canImport": false,
+        "scope": "function"
+      },
+      "is_active": true
+    },
+    {
+      "id": 11,
+      "role_code": "INV",
+      "role_name": "NV Đầu tư",
+      "description": "Investment Staff",
+      "category": "Business & Support",
+      "permissions": {
+        "canView": true,
+        "canCreate": true,
+        "canEdit": true,
+        "canDelete": false,
+        "canApprove": false,
+        "canImport": false,
+        "scope": "function"
+      },
+      "is_active": true
+    },
+    {
+      "id": 12,
+      "role_code": "SM",
+      "role_name": "SM",
+      "description": "Scrum Master",
+      "category": "Product & Project Management",
+      "permissions": {
+        "canView": true,
+        "canCreate": true,
+        "canEdit": true,
+        "canDelete": true,
+        "canApprove": false,
+        "canImport": false,
+        "scope": "function"
+      },
+      "is_active": true
+    },
+    {
+      "id": 13,
+      "role_code": "BU_LEAD",
+      "role_name": "Trưởng BU",
+      "description": "Business Unit Leader",
+      "category": "Management",
+      "permissions": {
+        "canView": true,
+        "canCreate": true,
+        "canEdit": true,
+        "canDelete": true,
+        "canApprove": false,
+        "canImport": false,
+        "scope": "function"
+      },
+      "is_active": true
+    },
+    {
+      "id": 14,
+      "role_code": "ADMIN_STAFF",
+      "role_name": "Hành chính tổng hợp",
+      "description": "Administrative Staff",
+      "category": "Business & Support",
+      "permissions": {
+        "canView": true,
+        "canCreate": true,
+        "canEdit": true,
+        "canDelete": true,
+        "canApprove": false,
+        "canImport": false,
+        "scope": "function"
+      },
+      "is_active": true
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2024-12-17",
+    "updated_by": "admin",
+    "description": "KPI TT Cloud System Roles Configuration"
+  }
+}

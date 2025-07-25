@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: kpi-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: kpi123
+      MYSQL_DATABASE: users_db
+      MYSQL_USER: kpi_user
+      MYSQL_PASSWORD: kpi123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/users_db_schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    networks:
+      - kpi-network
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: kpi-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - kpi-network
+    command: redis-server --appendonly yes
+
+  # User Management API
+  user-api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: kpi-user-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      API_PORT: 3001
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: kpi_user
+      DB_PASSWORD: kpi123
+      DB_NAME: users_db
+      JWT_SECRET: kpi-tt-cloud-jwt-secret-key-2025
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - kpi-network
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+
+  # Nginx Load Balancer
+  nginx:
+    image: nginx:alpine
+    container_name: kpi-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./:/var/www/html:ro
+    depends_on:
+      - user-api
+    networks:
+      - kpi-network
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  kpi-network:
+    driver: bridge

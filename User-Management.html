@@ -1,0 +1,3425 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI TT Cloud - Quản lý Người dùng</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/antd/5.12.8/reset.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="assets/css/common.css" rel="stylesheet">
+    <!-- Authentication System -->
+    <script src="assets/js/auth.js"></script>
+    <style>
+        /* Override common.css for User Management */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            background: #1a1a1a;
+        }
+
+        .main-content {
+            flex: 1;
+            background: #1a1a1a;
+            overflow-x: hidden;
+        }
+
+        .content {
+            padding: 24px;
+        }
+
+        /* User Management Specific Styles */
+        .user-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 20px;
+            min-height: 44px;
+        }
+
+        .search-filters {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex: 1;
+            max-width: 60%;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .search-box {
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 160px;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        /* Header Styles */
+        .header {
+            background: #2a2a2a;
+            padding: 16px 24px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 64px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .breadcrumb-item {
+            color: #fff;
+        }
+
+        .breadcrumb-separator {
+            color: #666;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #00458b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #555;
+        }
+
+        /* Sidebar Styles - Match Task Management */
+        .sidebar {
+            width: 250px;
+            background: #1a1a1a;
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #333;
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .logo-text {
+            margin-left: 8px;
+        }
+
+        .collapse-btn {
+            background: transparent;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .collapse-btn:hover {
+            background: #2a2a2a;
+            color: #fff;
+        }
+
+        .menu {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #999;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: #2a2a2a;
+            color: #fff;
+        }
+
+        .menu-item.active {
+            background: #2a2a2a;
+            color: #00ff88;
+            border-left-color: #00ff88;
+        }
+
+        .menu-item-icon {
+            width: 20px;
+            text-align: center;
+            margin-right: 12px;
+        }
+
+        .menu-item-text {
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .menu-item-text,
+        .sidebar.collapsed .logo-text {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .menu-item {
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .menu-item-icon {
+            margin-right: 0;
+        }
+
+        /* Submenu Styles */
+        .has-submenu {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .submenu-arrow {
+            position: absolute;
+            right: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .submenu {
+            display: none;
+            background: transparent;
+            margin-left: 0;
+            padding-left: 0;
+        }
+
+        .submenu-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px 10px 40px;
+            color: #999;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            border-left: 3px solid transparent;
+        }
+
+        .submenu-item:hover {
+            background: #2a2a2a;
+            color: #fff;
+            border-left-color: #555;
+        }
+
+        .submenu-item.active {
+            background: #2a2a2a;
+            color: #00ff88;
+            border-left-color: #00ff88;
+        }
+
+        .submenu-item-icon {
+            width: 16px;
+            text-align: center;
+            margin-right: 12px;
+            font-size: 12px;
+        }
+
+        .sidebar.collapsed .submenu {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .submenu-arrow {
+            display: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Button styles - match Task Management */
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #555;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: #ccc;
+        }
+
+        .btn:hover {
+            border-color: #00ff88;
+            color: #00ff88;
+            background: transparent;
+        }
+
+        .btn-primary {
+            background: transparent;
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .btn-primary:hover {
+            background: #00ff88;
+            color: #1a1a1a;
+            border-color: #00ff88;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #555;
+            color: #ccc;
+        }
+
+        .btn-outline:hover {
+            border-color: #00ff88;
+            color: #00ff88;
+            background: transparent;
+        }
+
+        .users-table {
+            background: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Table header section - match Task Management */
+        .table-header {
+            background: #312F30;
+            padding: 20px 30px;
+            border-bottom: 1px solid #00ff88;
+        }
+
+        .table-header h3 {
+            color: #fff;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Table content section */
+        .table-content {
+            background: #454647;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+
+        /* Left-align specific columns */
+        th:nth-child(1), td:nth-child(1),  /* Username */
+        th:nth-child(2), td:nth-child(2),  /* Full name */
+        th:nth-child(3), td:nth-child(3) { /* Email */
+            text-align: left;
+        }
+
+        th {
+            background: #2a2a2a;
+            color: #00ff88;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            color: #fff;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        /* Status badges - outline style like Task Management */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            background: transparent !important;
+            border: 1px solid;
+            display: inline-block;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .status-active {
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .status-inactive {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #2a2a2a;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #ccc;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .modal-close:hover {
+            background: #444;
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #444;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* Form Styles */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            margin-bottom: 6px;
+            color: #ccc;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .required {
+            color: #ff4d4f;
+        }
+
+        .form-control {
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        .form-control[multiple] {
+            min-height: 100px;
+        }
+
+        .form-help {
+            margin-top: 4px;
+            color: #888;
+            font-size: 12px;
+        }
+
+        .field-error {
+            margin-top: 4px;
+            color: #ff4d4f;
+            font-size: 12px;
+            min-height: 16px;
+        }
+
+        /* Checkbox styling */
+        input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        /* Date input styling */
+        input[type="date"] {
+            color-scheme: dark;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        /* Dropdown Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+            padding: 8px 0;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            color: #ccc;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 14px;
+        }
+
+        .dropdown-item:hover {
+            background: #3a3a3a;
+            color: #fff;
+        }
+
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #444;
+            margin: 8px 0;
+        }
+
+        /* Import Modal Styles */
+        .import-instructions {
+            background: #333;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .import-instructions h4 {
+            color: #00ff88;
+            margin-bottom: 12px;
+        }
+
+        .import-instructions ul {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        .import-instructions li {
+            margin-bottom: 6px;
+            color: #ccc;
+        }
+
+        .file-upload-area {
+            margin: 20px 0;
+        }
+
+        .upload-zone {
+            border: 2px dashed #555;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #333;
+        }
+
+        .upload-zone:hover {
+            border-color: #00ff88;
+            background: #3a3a3a;
+        }
+
+        .upload-zone i {
+            font-size: 48px;
+            color: #666;
+            margin-bottom: 16px;
+        }
+
+        .upload-zone:hover i {
+            color: #00ff88;
+        }
+
+        .upload-zone p {
+            margin: 8px 0;
+            color: #ccc;
+        }
+
+        .file-info {
+            color: #00ff88 !important;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #00ff88;
+            transition: width 0.3s ease;
+        }
+
+        #importResults {
+            background: #333;
+            padding: 16px;
+            border-radius: 6px;
+            margin-top: 16px;
+        }
+
+        #importSummary {
+            margin-bottom: 12px;
+        }
+
+        #importErrors {
+            background: #2a2a2a;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .btn-danger {
+            background: #ff4d4f;
+            border-color: #ff4d4f;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff7875;
+            border-color: #ff7875;
+        }
+
+        /* Override for dropdown delete button */
+        .dropdown .btn-danger:hover {
+            background: #666 !important;
+            border-color: #666 !important;
+            color: #fff !important;
+        }
+
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .search-box {
+                min-width: 140px;
+                max-width: 160px;
+            }
+
+            .action-buttons .btn {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            /* Hide text on smaller buttons, keep icons */
+            .action-buttons .btn span {
+                display: none;
+            }
+
+            .action-buttons .btn i {
+                margin-right: 0;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .user-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 16px;
+            }
+
+            .search-filters {
+                max-width: 100%;
+                justify-content: center;
+            }
+
+            .action-buttons {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .search-filters {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .search-box {
+                min-width: 100%;
+                max-width: 100%;
+            }
+
+            .action-buttons {
+                gap: 8px;
+            }
+
+            .action-buttons .btn {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            /* Modal responsive */
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-header,
+            .modal-footer {
+                padding: 16px 20px;
+            }
+
+            .upload-zone {
+                padding: 30px 15px;
+            }
+
+            .upload-zone i {
+                font-size: 36px;
+            }
+        }
+
+        .role-badge {
+            background: transparent;
+            border: 1px solid #3fd2c7;
+            color: #3fd2c7;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-right: 4px;
+            display: inline-block;
+        }
+
+        .team-badge {
+            background: transparent;
+            border: 1px solid #99ddff;
+            color: #99ddff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-right: 4px;
+            display: inline-block;
+        }
+
+        .action-buttons-cell {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        /* Action buttons - outline style like Task Management */
+        .btn-action {
+            background: transparent !important;
+            border: 1px solid #555;
+            color: #ccc;
+            padding: 6px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-action:hover {
+            border-color: #666;
+            color: #fff;
+            background: #666 !important;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-chart-line" style="color: #00ff88; margin-right: 8px;"></i>
+                    <span class="logo-text">KPI TT Cloud</span>
+                </div>
+                <button class="collapse-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <nav class="menu">
+                <a href="index.html" class="menu-item">
+                    <i class="fas fa-home menu-item-icon"></i>
+                    <span class="menu-item-text">Trang chủ</span>
+                </a>
+                <a href="Task-Management.html" class="menu-item">
+                    <i class="fas fa-tasks menu-item-icon"></i>
+                    <span class="menu-item-text">Quản lý Công việc</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-dollar-sign menu-item-icon"></i>
+                    <span class="menu-item-text">Quản lý Doanh thu</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-shield-alt menu-item-icon"></i>
+                    <span class="menu-item-text">Chất lượng Dịch vụ</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-graduation-cap menu-item-icon"></i>
+                    <span class="menu-item-text">Quản lý Đào tạo</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-clipboard-check menu-item-icon"></i>
+                    <span class="menu-item-text">Quản lý Tuân thủ</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-chart-bar menu-item-icon"></i>
+                    <span class="menu-item-text">Dashboard KPI</span>
+                </a>
+                <div class="menu-item has-submenu expanded" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-cog menu-item-icon"></i>
+                    <span class="menu-item-text">Quản trị</span>
+                    <i class="fas fa-chevron-down submenu-arrow" style="transform: rotate(180deg);"></i>
+                </div>
+                <div class="submenu" style="display: block;">
+                    <a href="User-Management.html" class="submenu-item active">
+                        <i class="fas fa-users submenu-item-icon"></i>
+                        <span class="submenu-item-text">Quản lý Người dùng</span>
+                    </a>
+                    <a href="#" class="submenu-item">
+                        <i class="fas fa-target submenu-item-icon"></i>
+                        <span class="submenu-item-text">Cấu hình Targets</span>
+                    </a>
+                    <a href="#" class="submenu-item">
+                        <i class="fas fa-balance-scale submenu-item-icon"></i>
+                        <span class="submenu-item-text">Cấu hình Weights</span>
+                    </a>
+                    <a href="#" class="submenu-item">
+                        <i class="fas fa-calculator submenu-item-icon"></i>
+                        <span class="submenu-item-text">Cấu hình Formulas</span>
+                    </a>
+                    <a href="#" class="submenu-item">
+                        <i class="fas fa-sliders-h submenu-item-icon"></i>
+                        <span class="submenu-item-text">System Settings</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="breadcrumb">
+                    <span class="breadcrumb-item">
+                        <i class="fas fa-home"></i>
+                    </span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item">Quản lý Người dùng</span>
+                </div>
+
+                <div class="user-info">
+                    <span id="currentUserDisplay">Loading...</span>
+                    <span id="currentUserRole" style="font-size: 12px; color: #00ff88; margin-left: 8px;"></span>
+                    <div class="user-avatar" id="userAvatar">?</div>
+                    <button class="logout-btn" onclick="logout()" title="Đăng xuất" style="margin-left: 12px; background: transparent; border: 1px solid #555; color: #fff; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="content">
+                <div class="user-controls">
+                    <div class="search-filters">
+                        <input type="text" id="searchBox" class="search-box" placeholder="Tìm kiếm người dùng..." onkeyup="filterUsers()">
+                        <select id="roleFilter" class="search-box" onchange="filterUsers()">
+                            <option value="">Tất cả vai trò</option>
+                        </select>
+                        <select id="teamFilter" class="search-box" onchange="filterUsers()">
+                            <option value="">Tất cả teams</option>
+                        </select>
+                        <select id="statusFilter" class="search-box" onchange="filterUsers()">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="active">Đang hoạt động</option>
+                            <option value="inactive">Không hoạt động</option>
+                        </select>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-outline" onclick="openImportModal()" id="importUserBtn" title="Import từ file">
+                            <i class="fas fa-upload"></i>
+                            <span>Import từ file</span>
+                        </button>
+                        <button class="btn btn-outline" onclick="downloadTemplate()" id="downloadTemplateBtn" title="Tải template">
+                            <i class="fas fa-download"></i>
+                            <span>Tải template</span>
+                        </button>
+                        <button class="btn btn-primary" onclick="openAddUserModal()" id="addUserBtn" title="Thêm người dùng">
+                            <i class="fas fa-plus"></i>
+                            <span>Thêm người dùng</span>
+                        </button>
+                        <div class="dropdown" style="display: none;" id="deleteAllBtn">
+                            <button class="btn btn-danger dropdown-toggle" onclick="toggleDeleteDropdown()" title="Tùy chọn xóa">
+                                <i class="fas fa-trash-alt"></i>
+                                <span>Xóa tất cả</span>
+                                <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 10px;"></i>
+                            </button>
+                            <div class="dropdown-menu" id="deleteDropdownMenu">
+                                <a class="dropdown-item" onclick="deactivateUsers()">
+                                    <i class="fas fa-user-slash"></i>
+                                    Vô hiệu hóa người dùng
+                                </a>
+                                <a class="dropdown-item" onclick="permanentDeleteUsers()">
+                                    <i class="fas fa-trash"></i>
+                                    Xóa vĩnh viễn (Nguy hiểm!)
+                                </a>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <!-- Change Password Modal -->
+                <div id="changePasswordModal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 600px;">
+                        <div class="modal-header">
+                            <h3>Đổi mật khẩu người dùng</h3>
+                            <button class="modal-close" onclick="closeChangePasswordModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="user-info-section">
+                                <h4 style="color: #00ff88; margin-bottom: 12px;">
+                                    <i class="fas fa-user"></i> Thông tin người dùng
+                                </h4>
+                                <div style="background: #333; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Username:</label>
+                                            <span id="changePasswordUsername" style="color: #00ff88; font-weight: bold;"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Full Name:</label>
+                                            <span id="changePasswordFullName" style="color: #ccc;"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form id="changePasswordForm">
+                                <!-- Hidden field to store user ID -->
+                                <input type="hidden" id="changePasswordUserId" name="userId">
+
+                                <div class="admin-notice" style="background: #2d4a3e; border-left: 4px solid #00ff88; padding: 12px; margin-bottom: 20px; border-radius: 4px;">
+                                    <p style="margin: 0; color: #00ff88; font-size: 14px;">
+                                        <i class="fas fa-shield-alt"></i>
+                                        <strong>Quyền Admin:</strong> Bạn có thể thay đổi mật khẩu của user mà không cần nhập mật khẩu cũ.
+                                    </p>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="newPassword">
+                                            <i class="fas fa-key"></i> Mật khẩu mới *
+                                        </label>
+                                        <input type="password" id="newPassword" name="newPassword"
+                                               class="form-control" required placeholder="Nhập mật khẩu mới" minlength="6">
+                                        <div class="error-message" id="newPasswordError"></div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="confirmPassword">
+                                            <i class="fas fa-check-circle"></i> Xác nhận mật khẩu *
+                                        </label>
+                                        <input type="password" id="confirmPassword" name="confirmPassword"
+                                               class="form-control" required placeholder="Nhập lại mật khẩu mới" minlength="6">
+                                        <div class="error-message" id="confirmPasswordError"></div>
+                                    </div>
+                                </div>
+
+                                <div class="password-requirements">
+                                    <h5 style="color: #00ff88; margin-bottom: 8px; font-size: 14px;">
+                                        <i class="fas fa-info-circle"></i> Yêu cầu mật khẩu:
+                                    </h5>
+                                    <ul style="color: #ccc; font-size: 13px; margin-left: 20px; line-height: 1.5;">
+                                        <li>Tối thiểu 6 ký tự</li>
+                                        <li>Nên chứa chữ hoa, chữ thường và số</li>
+                                        <li>Tránh sử dụng thông tin cá nhân</li>
+                                        <li>User sẽ phải sử dụng mật khẩu mới để đăng nhập</li>
+                                    </ul>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline" onclick="closeChangePasswordModal()">
+                                <i class="fas fa-times"></i>
+                                Hủy
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="changeUserPassword()" id="changePasswordBtn">
+                                <i class="fas fa-key"></i>
+                                Đổi mật khẩu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Roles & Teams Mapping Modal -->
+                <div id="mappingModal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 800px;">
+                        <div class="modal-header">
+                            <h3>Roles & Teams Reference cho Import</h3>
+                            <button class="modal-close" onclick="closeMappingModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div>
+                                    <h4 style="color: #00ff88; margin-bottom: 10px;">
+                                        <i class="fas fa-user-tag"></i> Roles
+                                    </h4>
+                                    <div id="rolesMapping" style="background: #333; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 13px; max-height: 300px; overflow-y: auto;">
+                                        Loading...
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 style="color: #00ff88; margin-bottom: 10px;">
+                                        <i class="fas fa-users"></i> Teams
+                                    </h4>
+                                    <div id="teamsMapping" style="background: #333; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 13px; max-height: 300px; overflow-y: auto;">
+                                        Loading...
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 20px; padding: 15px; background: #2a2a2a; border-radius: 6px;">
+                                <h4 style="color: #ffc107; margin-bottom: 10px;">
+                                    <i class="fas fa-info-circle"></i> Cách sử dụng trong CSV:
+                                </h4>
+                                <ul style="margin: 0; padding-left: 20px; color: #ccc;">
+                                    <li><strong>Một role/team:</strong> <code>5</code> hoặc <code>1</code></li>
+                                    <li><strong>Nhiều roles/teams:</strong> <code>"1,3,5"</code> (có dấu ngoặc kép)</li>
+                                    <li><strong>Ví dụ:</strong> roles: <code>"1,5"</code> = Admin + DEV</li>
+                                    <li><strong>Ví dụ:</strong> teams: <code>"1,11"</code> = Team 1 + Team 11</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline" onclick="closeMappingModal()">Đóng</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="errorMessage" class="error" style="display: none;"></div>
+
+                <!-- User Modal -->
+                <div id="userModal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 id="modalTitle">Thêm người dùng mới</h3>
+                            <button class="modal-close" onclick="closeUserModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="userForm">
+                                <input type="hidden" id="userId" name="userId">
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="username">Tên đăng nhập <span class="required">*</span></label>
+                                        <input type="text" id="username" name="username" class="form-control" required>
+                                        <div class="field-error" id="usernameError"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="fullName">Họ và tên <span class="required">*</span></label>
+                                        <input type="text" id="fullName" name="fullName" class="form-control" required>
+                                        <div class="field-error" id="fullNameError"></div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="email">Email</label>
+                                        <input type="email" id="email" name="email" class="form-control">
+                                        <div class="field-error" id="emailError"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="phone">Số điện thoại</label>
+                                        <input type="tel" id="phone" name="phone" class="form-control">
+                                        <div class="field-error" id="phoneError"></div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="joinDate">Ngày vào làm</label>
+                                        <input type="date" id="joinDate" name="joinDate" class="form-control">
+                                    </div>
+                                    <div class="form-group" id="passwordGroup">
+                                        <label class="form-label" for="password">Mật khẩu <span class="required">*</span></label>
+                                        <input type="password" id="password" name="password" class="form-control">
+                                        <div class="field-error" id="passwordError"></div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="roles">Vai trò</label>
+                                        <select id="roles" name="roles" class="form-control" multiple>
+                                            <!-- Options will be loaded dynamically -->
+                                        </select>
+                                        <small class="form-help">Giữ Ctrl để chọn nhiều vai trò</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="teams">Nhóm làm việc</label>
+                                        <select id="teams" name="teams" class="form-control" multiple>
+                                            <!-- Options will be loaded dynamically -->
+                                        </select>
+                                        <small class="form-help">Giữ Ctrl để chọn nhiều nhóm</small>
+                                    </div>
+                                </div>
+
+                                <div class="form-row" id="statusGroup" style="display: none;">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <input type="checkbox" id="isActive" name="isActive" checked>
+                                            Tài khoản đang hoạt động
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="leaveDate">Ngày nghỉ việc</label>
+                                        <input type="date" id="leaveDate" name="leaveDate" class="form-control">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline" onclick="closeUserModal()">Hủy</button>
+                            <button type="button" class="btn btn-primary" onclick="saveUser()" id="saveBtn">
+                                <i class="fas fa-save"></i>
+                                Lưu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Import Modal -->
+                <div id="importModal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 600px;">
+                        <div class="modal-header">
+                            <h3>Import người dùng từ file</h3>
+                            <button class="modal-close" onclick="closeImportModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="import-instructions">
+                                <h4><i class="fas fa-info-circle"></i> Hướng dẫn</h4>
+                                <ul>
+                                    <li>Chỉ chấp nhận file CSV (.csv)</li>
+                                    <li>File tối đa 5MB</li>
+                                    <li>Các cột bắt buộc: username, full_name, password</li>
+                                    <li>Các cột tùy chọn: email, phone, roles, teams</li>
+                                    <li>Roles và teams là ID số, cách nhau bởi dấu phẩy</li>
+                                </ul>
+                                <p><strong>Lưu ý:</strong> Tải template mẫu để xem định dạng chính xác</p>
+                            </div>
+
+                            <div class="file-upload-area">
+                                <input type="file" id="importFile" accept=".csv" style="display: none;">
+                                <div class="upload-zone" onclick="document.getElementById('importFile').click()">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Nhấn để chọn file CSV</p>
+                                    <p class="file-info" id="fileInfo" style="display: none;"></p>
+                                </div>
+                            </div>
+
+                            <div id="importProgress" style="display: none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                                </div>
+                                <p id="progressText">Đang xử lý...</p>
+                            </div>
+
+                            <div id="importResults" style="display: none;">
+                                <h4>Kết quả Import</h4>
+                                <div id="importSummary"></div>
+                                <div id="importErrors" style="max-height: 200px; overflow-y: auto;"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline" onclick="closeImportModal()">Hủy</button>
+                            <button type="button" class="btn btn-primary" onclick="startImport()" id="importBtn" disabled>
+                                <i class="fas fa-upload"></i>
+                                Import
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="users-table">
+                    <div class="table-header">
+                        <h3>
+                            <i class="fas fa-users"></i>
+                            Danh sách Người dùng
+                            <span id="userCount" style="font-size: 14px; color: #666; margin-left: 10px;">(0)</span>
+                        </h3>
+                    </div>
+
+                    <div class="table-content">
+                        <div id="loadingState" class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Đang tải dữ liệu...</p>
+                        </div>
+
+                        <div id="emptyState" class="empty-state" style="display: none;">
+                            <i class="fas fa-users"></i>
+                            <h3>Chưa có người dùng nào</h3>
+                            <p>Nhấn "Thêm người dùng" để bắt đầu</p>
+                        </div>
+
+                        <table id="usersTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;">
+                                        <input type="checkbox" id="selectAllUsers" onchange="toggleSelectAllUsers()">
+                                    </th>
+                                    <th>Tên đăng nhập</th>
+                                    <th>Họ và tên</th>
+                                    <th>Email</th>
+                                    <th>Vai trò</th>
+                                    <th>Teams</th>
+                                    <th>Ngày vào làm</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let users = [];
+        let roles = [];
+        let teams = [];
+        let filteredUsers = [];
+        let userPermissions = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Wait a bit for auth.js to fully load
+            setTimeout(async () => {
+                await initializeUserInfo();
+                await loadUserPermissions(); // Load user permissions first
+                checkPermissions(); // Check user permissions for UI elements
+                if (document.getElementById('userManagementContent')) {
+                    loadInitialData();
+                }
+            }, 100);
+        });
+
+        async function loadUserPermissions() {
+            try {
+                console.log('🔐 Loading user permissions from API...');
+
+                // Try different token keys
+                const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+                if (!token) {
+                    console.error('No token found for permissions request');
+                    return;
+                }
+
+                console.log('🔐 Token found, making API request...');
+
+                const response = await fetch('http://localhost:3001/api/user/permissions', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('🔐 Permission API response:', data);
+
+                    if (data.success) {
+                        userPermissions = data.permissions;
+                        console.log('✅ User permissions loaded:', userPermissions);
+                        console.log(`   - Role: ${userPermissions.roleName} (${userPermissions.roleCode})`);
+                        console.log(`   - Level: ${userPermissions.permissions.level}`);
+                        console.log(`   - Can Manage Users: ${userPermissions.capabilities.canManageUsers}`);
+                        console.log(`   - Is Read Only: ${userPermissions.capabilities.isReadOnly}`);
+
+                        // Update UI based on permissions
+                        console.log('🔐 Updating UI with new permissions...');
+                        updateUIBasedOnPermissions(userPermissions);
+                        console.log('🔐 UI updated successfully');
+                    } else {
+                        console.error('Failed to load user permissions:', data.error);
+                    }
+                } else {
+                    console.error('Failed to fetch user permissions:', response.status, response.statusText);
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                }
+
+            } catch (error) {
+                console.error('Error loading user permissions:', error);
+            }
+        }
+
+        async function initializeUserInfo() {
+            try {
+                console.log('User Management: Initializing user info...');
+
+                // Check localStorage data first
+                const token = localStorage.getItem('authToken');
+                const currentUser = localStorage.getItem('currentUser');
+                const userRole = localStorage.getItem('userRole');
+                const userFullData = localStorage.getItem('userFullData');
+                console.log('User Management: localStorage data:', { token: !!token, currentUser, userRole, hasFullData: !!userFullData });
+
+                // Check if user is authenticated (either via authManager or direct API)
+                let userInfo = null;
+                let permissions = null;
+
+                // Try authManager first
+                if (window.authManager) {
+                    try {
+                        const sessionLoaded = await window.authManager.loadUserSession();
+                        if (sessionLoaded) {
+                            userInfo = window.authManager.getCurrentUser();
+                            permissions = window.authManager.getPermissions();
+                            console.log('User Management: AuthManager session loaded', { userInfo, permissions });
+                            console.log('🔍 DEBUG: User roles:', userInfo.roles);
+                            console.log('🔍 DEBUG: Permissions object:', permissions);
+
+                            // Don't set permissions here - will be loaded from API
+                            console.log('User Management: User session loaded, permissions will be loaded from API:', userInfo.username);
+                        } else {
+                            console.log('User Management: AuthManager session failed, will try fallback');
+                        }
+                    } catch (error) {
+                        console.log('User Management: AuthManager error, will try fallback:', error);
+                    }
+                } else {
+                    console.log('User Management: AuthManager not available, will try fallback');
+                }
+
+                // Try to use API data from localStorage first
+                if (!userInfo && userFullData) {
+                    try {
+                        const apiUserData = JSON.parse(userFullData);
+                        userInfo = {
+                            id: apiUserData.id,
+                            username: apiUserData.username,
+                            fullName: apiUserData.fullName,
+                            full_name: apiUserData.fullName,
+                            email: apiUserData.email,
+                            roles: apiUserData.roles,
+                            teams: apiUserData.teams,
+                            token: token
+                        };
+
+                        // Don't set permissions here - will be loaded from API
+                        permissions = null;
+
+                        console.log('User Management: Using API data from localStorage', { userInfo, permissions });
+                        console.log('User Management: User roles:', apiUserData.roles);
+                        console.log('User Management: Calculated permissions:', permissions);
+                    } catch (error) {
+                        console.log('User Management: Error parsing API data, trying fallback');
+                    }
+                }
+
+                // Fallback to demo mode check
+                if (!userInfo) {
+                    const token = localStorage.getItem('authToken');
+                    const currentUser = localStorage.getItem('currentUser');
+                    const userRole = localStorage.getItem('userRole');
+                    const userTeams = JSON.parse(localStorage.getItem('userTeams') || '[]');
+
+                    if (token) { // Only need token, create default user if needed
+                        // Create demo user info
+                        const demoNames = {
+                            'admin': 'System Administrator',
+                            'cpo': 'Trần Văn A',
+                            'pm1': 'Nguyễn Thị B',
+                            'po1': 'Lê Văn C',
+                            'dev1': 'Phạm Thị D'
+                        };
+
+                        userInfo = {
+                            id: 1,
+                            username: currentUser || 'admin',
+                            fullName: demoNames[currentUser] || currentUser || 'System Administrator',
+                            full_name: demoNames[currentUser] || currentUser || 'System Administrator',
+                            email: `${currentUser || 'admin'}@viettelidc.com`,
+                            roles: [userRole || 'Admin'],
+                            teams: userTeams.length > 0 ? userTeams : ['Team 1'],
+                            token: token
+                        };
+
+                        // Set basic permissions based on roles
+                        permissions = {
+                            canView: true, // All authenticated users can view
+                            canCreate: userRole === 'Admin' || userRole === 'CPO',
+                            canEdit: userRole === 'Admin' || userRole === 'CPO' || userRole === 'PM',
+                            canDelete: userRole === 'Admin' || userRole === 'CPO'
+                        };
+
+                        console.log('User Management: Demo session loaded', { userInfo, permissions });
+                    }
+                }
+
+                if (userInfo) {
+                    console.log('User Management: Authentication successful, updating UI');
+
+                    // Update UI
+                    document.getElementById('currentUserDisplay').textContent = userInfo.fullName || userInfo.full_name || userInfo.username;
+                    const userRoles = Array.isArray(userInfo.roles) ? userInfo.roles : [userInfo.roles];
+                    document.getElementById('currentUserRole').textContent = `(${userRoles[0] || 'Unknown'})`;
+                    document.getElementById('userAvatar').textContent = (userInfo.fullName || userInfo.full_name || userInfo.username).charAt(0).toUpperCase();
+
+                    // UI will be updated after loading permissions from API
+                    console.log('User Management: UI will be updated after loading permissions from API');
+
+                    // Load initial data after successful authentication
+                    console.log('User Management: Loading initial data...');
+                    try {
+                        await loadInitialData();
+                        console.log('User Management: Initial data loaded successfully');
+                    } catch (error) {
+                        console.error('User Management: Failed to load initial data:', error);
+                        // Try just loading users directly
+                        console.log('User Management: Trying to load users directly...');
+                        try {
+                            await loadUsers();
+                            renderUsersTable();
+                            console.log('User Management: Users loaded directly');
+                        } catch (userError) {
+                            console.error('User Management: Failed to load users directly:', userError);
+                        }
+                    }
+                } else {
+                    console.log('User Management: No valid authentication, but staying on page for debugging');
+                    // Temporarily disable redirect for debugging
+                    // window.location.href = 'auth/login.html';
+                    showError('Authentication failed. Please check console for details.');
+                }
+            } catch (error) {
+                console.error('User Management: Initialize user info error:', error);
+                showError('Lỗi khởi tạo thông tin người dùng');
+                // Don't redirect on error, let user see the error
+            }
+        }
+
+        async function loadInitialData() {
+            try {
+                await Promise.all([
+                    loadUsers(),
+                    loadRoles(),
+                    loadTeams()
+                ]);
+
+                populateFilters();
+                renderUsersTable();
+            } catch (error) {
+                console.error('Failed to load initial data:', error);
+                showError('Không thể tải dữ liệu. Vui lòng thử lại sau.');
+            }
+        }
+
+        async function loadUsers() {
+            console.log('🔄 Loading users from API...');
+            try {
+                // Get auth token from localStorage
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    throw new Error('No authentication token available');
+                }
+
+                // Load from API with authentication
+                const response = await fetch('http://localhost:3001/api/users', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                console.log('📡 API Response status:', response.status);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📦 API Response data:', data);
+                    console.log('📦 API Response keys:', Object.keys(data));
+                    console.log('📦 data.success:', data.success);
+                    console.log('📦 data.data exists:', !!data.data);
+                    if (data.data) {
+                        console.log('📦 data.data keys:', Object.keys(data.data));
+                        console.log('📦 data.data.users exists:', !!data.data.users);
+                        if (data.data.users) {
+                            console.log('📦 data.data.users length:', data.data.users.length);
+                        }
+                    }
+
+                    if (data.success && data.data) {
+                        // Check if data.data is direct array (correct format)
+                        if (Array.isArray(data.data)) {
+                            users = data.data;
+                            filteredUsers = [...users];
+                            console.log('✅ Users loaded from API (direct array):', users.length);
+                            return;
+                        }
+                        // Check if data.data.users exists (nested format)
+                        else if (data.data.users && Array.isArray(data.data.users)) {
+                            users = data.data.users;
+                            filteredUsers = [...users];
+                            console.log('✅ Users loaded from API (nested):', users.length);
+                            return;
+                        }
+                    }
+                    // Fallback for direct users array
+                    else if (data.success && data.users && Array.isArray(data.users)) {
+                        users = data.users;
+                        filteredUsers = [...users];
+                        console.log('✅ Users loaded from API (fallback):', users.length);
+                        return;
+                    }
+
+                    // If we reach here, structure is not recognized
+                    console.log('❌ API response structure not recognized');
+                    console.log('   - data.success:', data.success);
+                    console.log('   - data.data type:', typeof data.data);
+                    console.log('   - data.data is Array:', Array.isArray(data.data));
+                    console.log('   - data.users exists:', !!data.users);
+                }
+
+                throw new Error(`API returned status ${response.status}`);
+            } catch (error) {
+                console.error('❌ API load failed:', error);
+                console.log('🔄 Using demo data as fallback...');
+
+                // Fallback to demo data
+                users = [
+                    {
+                        id: 1,
+                        username: 'admin',
+                        full_name: 'System Administrator',
+                        email: 'admin@viettelidc.com',
+                        roles: 'Admin',
+                        teams: 'Team 1 - Public Cloud Vmware',
+                        join_date: '2024-01-01',
+                        is_active: true
+                    },
+                    {
+                        id: 2,
+                        username: 'cpo',
+                        full_name: 'Trần Văn A',
+                        email: 'cpo@viettelidc.com',
+                        roles: 'CPO',
+                        teams: 'Team 1 - Public Cloud Vmware',
+                        join_date: '2024-01-15',
+                        is_active: true
+                    },
+                    {
+                        id: 3,
+                        username: 'pm1',
+                        full_name: 'Nguyễn Thị B',
+                        email: 'pm1@viettelidc.com',
+                        roles: 'PM',
+                        teams: 'Team 1 - Public Cloud Vmware, Team 2 - Public Cloud Openstack',
+                        join_date: '2024-01-01',
+                        is_active: true
+                    }
+                ];
+                filteredUsers = [...users];
+                console.log('✅ Demo users loaded as fallback:', users.length);
+            }
+        }
+
+        async function loadRoles() {
+            try {
+                // Roles endpoint doesn't require authentication
+                const response = await fetch('http://localhost:3001/api/roles', {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    roles = data.roles || [];
+                } else {
+                    throw new Error('Failed to fetch roles');
+                }
+            } catch (error) {
+                console.error('Load roles error:', error);
+                // Fallback to demo data
+                roles = [
+                    { id: 1, role_name: 'Admin' },
+                    { id: 2, role_name: 'CPO' },
+                    { id: 3, role_name: 'PM' },
+                    { id: 4, role_name: 'PO' },
+                    { id: 5, role_name: 'Dev' }
+                ];
+            }
+        }
+
+        async function loadTeams() {
+            try {
+                // Teams endpoint doesn't require authentication
+                const response = await fetch('http://localhost:3001/api/teams', {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    teams = data.teams || [];
+                } else {
+                    throw new Error('Failed to fetch teams');
+                }
+            } catch (error) {
+                console.error('Load teams error:', error);
+                // Fallback to demo data
+                teams = [
+                    { id: 1, team_name: 'Team 1 - Public Cloud Vmware' },
+                    { id: 2, team_name: 'Team 2 - Public Cloud Openstack' },
+                    { id: 3, team_name: 'Team 3 - Private Cloud' }
+                ];
+            }
+        }
+
+        function populateFilters() {
+            // Populate role filter
+            const roleFilter = document.getElementById('roleFilter');
+            roleFilter.innerHTML = '<option value="">Tất cả vai trò</option>';
+            roles.forEach(role => {
+                const option = document.createElement('option');
+                option.value = role.role_name;
+                option.textContent = role.role_name;
+                roleFilter.appendChild(option);
+            });
+
+            // Populate team filter
+            const teamFilter = document.getElementById('teamFilter');
+            teamFilter.innerHTML = '<option value="">Tất cả teams</option>';
+            teams.forEach(team => {
+                const option = document.createElement('option');
+                option.value = team.team_name;
+                option.textContent = team.team_name;
+                teamFilter.appendChild(option);
+            });
+        }
+
+        function renderUsersTable() {
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+            const usersTable = document.getElementById('usersTable');
+            const tableBody = document.getElementById('usersTableBody');
+            const userCount = document.getElementById('userCount');
+
+            loadingState.style.display = 'none';
+
+            if (filteredUsers.length === 0) {
+                emptyState.style.display = 'block';
+                usersTable.style.display = 'none';
+                userCount.textContent = '(0)';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            usersTable.style.display = 'table';
+            userCount.textContent = `(${filteredUsers.length})`;
+
+            tableBody.innerHTML = '';
+            filteredUsers.forEach(user => {
+                const row = document.createElement('tr');
+                row.style.cursor = 'pointer';
+                row.onclick = function(event) {
+                    // Don't trigger if clicking on action buttons
+                    if (event.target.closest('.action-buttons-cell')) {
+                        return;
+                    }
+                    toggleUserSelection(user.id);
+                };
+
+                row.innerHTML = `
+                    <td onclick="event.stopPropagation();">
+                        <input type="checkbox" class="user-checkbox" value="${user.id}" onchange="toggleUserSelection(${user.id})">
+                    </td>
+                    <td>${user.username}</td>
+                    <td>${user.full_name}</td>
+                    <td>${user.email || '-'}</td>
+                    <td>
+                        ${user.roles ? (typeof user.roles === 'string' ?
+                            user.roles.split(',').map(role => `<span class="role-badge">${role.trim()}</span>`).join('') :
+                            Array.isArray(user.roles) ?
+                            user.roles.map(role => `<span class="role-badge">${typeof role === 'string' ? role.trim() : role}</span>`).join('') :
+                            `<span class="role-badge">${user.roles}</span>`
+                        ) : '-'}
+                    </td>
+                    <td>
+                        ${user.teams ? (typeof user.teams === 'string' ?
+                            user.teams.split(',').map(team => `<span class="team-badge">${team.trim()}</span>`).join('') :
+                            Array.isArray(user.teams) ?
+                            user.teams.map(team => `<span class="team-badge">${typeof team === 'string' ? team.trim() : team}</span>`).join('') :
+                            `<span class="team-badge">${user.teams}</span>`
+                        ) : '-'}
+                    </td>
+                    <td>${formatDate(user.join_date)}</td>
+                    <td>
+                        <span class="status-badge ${user.is_active ? 'status-active' : 'status-inactive'}">
+                            ${user.is_active ? 'Hoạt động' : 'Không hoạt động'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons-cell">
+                            <button class="btn-action edit-user-btn" onclick="editUser(${user.id})" title="Chỉnh sửa">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action change-password-btn" onclick="openChangePasswordModal(${user.id}, '${user.username}')" title="Đổi mật khẩu">
+                                <i class="fas fa-key"></i>
+                            </button>
+                            <button class="btn-action delete-user-btn" onclick="deactivateUser(${user.id})" title="Vô hiệu hóa người dùng">
+                                <i class="fas fa-user-slash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Update select all checkbox state and delete button
+            updateSelectAllCheckbox();
+            updateDeleteAllButton();
+
+            // Update action buttons based on current permissions
+            if (userPermissions) {
+                updateUserActionButtons(userPermissions);
+            }
+        }
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const teamFilter = document.getElementById('teamFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            filteredUsers = users.filter(user => {
+                const matchesSearch = user.username.toLowerCase().includes(searchTerm) ||
+                                    user.full_name.toLowerCase().includes(searchTerm) ||
+                                    (user.email && user.email.toLowerCase().includes(searchTerm));
+
+                const matchesRole = !roleFilter || (user.roles && user.roles.includes(roleFilter));
+                const matchesTeam = !teamFilter || (user.teams && user.teams.includes(teamFilter));
+
+                // Use status filter to show active/inactive/all users
+                const matchesStatus = !statusFilter ||
+                                    (statusFilter === 'active' && user.is_active) ||
+                                    (statusFilter === 'inactive' && !user.is_active);
+
+                return matchesSearch && matchesRole && matchesTeam && matchesStatus;
+            });
+
+            renderUsersTable();
+        }
+
+
+
+        // Global variables for form data
+        let rolesData = [];
+        let teamsData = [];
+        let isEditMode = false;
+        let currentUser = null;
+
+        // Auto refresh user list with subtle loading indicator
+        async function autoRefreshUsers() {
+            // Show subtle loading indicator
+            const userTable = document.querySelector('.users-table tbody');
+            if (userTable) {
+                userTable.style.opacity = '0.6';
+                userTable.style.pointerEvents = 'none';
+            }
+
+            try {
+                await loadUsers();
+                filterUsers(); // Reapply current filters
+            } finally {
+                // Hide loading indicator
+                if (userTable) {
+                    userTable.style.opacity = '1';
+                    userTable.style.pointerEvents = 'auto';
+                }
+            }
+        }
+
+        // Update UI based on user permissions
+        function updateUIBasedOnPermissions(permissionData) {
+            console.log('🔧 Updating UI based on permissions:', permissionData);
+
+            // Handle both old and new permission structure
+            let permissions;
+            if (permissionData && permissionData.permissions) {
+                // New API structure
+                permissions = permissionData.permissions;
+                console.log('🔧 Using new API permission structure');
+                console.log('🔧 Permission level:', permissions.level);
+                console.log('🔧 Is admin level:', permissions.level === 'ADMIN_LEVEL');
+            } else {
+                // Old structure fallback
+                permissions = permissionData || {};
+                console.log('🔧 Using fallback permission structure');
+            }
+
+            // Get UI elements
+            const addUserBtn = document.getElementById('addUserBtn');
+            const deleteAllBtn = document.getElementById('deleteAllBtn');
+            const importUserBtn = document.getElementById('importUserBtn');
+            const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+
+            console.log('🔧 Elements found:', {
+                addUserBtn: !!addUserBtn,
+                deleteAllBtn: !!deleteAllBtn,
+                importUserBtn: !!importUserBtn,
+                downloadTemplateBtn: !!downloadTemplateBtn
+            });
+
+            // Show/hide buttons based on permissions
+            const isAdminLevel = permissions?.level === 'ADMIN_LEVEL';
+            const canCreateUser = permissions?.canCreateUser || permissions?.canCreate;
+            const canDeleteUser = permissions?.canDeleteUser || permissions?.canDelete;
+            const canImportUsers = permissions?.canImportUsers || permissions?.canImport;
+
+            console.log('🔧 Permission checks:', {
+                isAdminLevel,
+                canCreateUser,
+                canDeleteUser,
+                canImportUsers
+            });
+
+            if (addUserBtn) {
+                addUserBtn.style.display = canCreateUser ? 'inline-flex' : 'none';
+                console.log('🔧 Add User button:', canCreateUser ? 'shown' : 'hidden');
+            }
+
+            if (deleteAllBtn) {
+                deleteAllBtn.style.display = canDeleteUser ? 'inline-flex' : 'none';
+                console.log('🔧 Delete All button:', canDeleteUser ? 'shown' : 'hidden', 'Element:', deleteAllBtn);
+            } else {
+                console.error('🔧 Delete All button element not found!');
+            }
+
+            if (importUserBtn) {
+                importUserBtn.style.display = canImportUsers ? 'inline-flex' : 'none';
+                console.log('🔧 Import button:', canImportUsers ? 'shown' : 'hidden');
+            }
+
+            if (downloadTemplateBtn) {
+                // Template download only for ADMIN level users
+                downloadTemplateBtn.style.display = isAdminLevel ? 'inline-flex' : 'none';
+                console.log('🔧 Download Template button:', isAdminLevel ? 'shown (admin only)' : 'hidden (non-admin)');
+            }
+
+            // Update action buttons in user table rows
+            updateUserActionButtons(permissions);
+        }
+
+        function updateUserActionButtons(permissionData) {
+            console.log('🔧 Updating user action buttons based on permissions');
+
+            // Handle both old and new permission structures
+            let permissions;
+            if (permissionData && permissionData.permissions) {
+                // New API structure
+                permissions = permissionData.permissions;
+            } else {
+                // Old structure fallback
+                permissions = permissionData || {};
+            }
+
+            const isAdminLevel = permissions?.level === 'ADMIN_LEVEL';
+            const isViewOnly = permissions?.level === 'VIEW_ONLY_LEVEL';
+
+            // For VIEW_ONLY users, all action buttons should be hidden
+            const canEditUser = isViewOnly ? false : (permissions?.canEditUser || permissions?.canEdit || isAdminLevel);
+            const canDeleteUser = isViewOnly ? false : (permissions?.canDeleteUser || permissions?.canDelete || isAdminLevel);
+            const canChangePassword = isViewOnly ? false : (permissions?.canChangePassword || isAdminLevel);
+
+            // Update all existing action buttons in the table
+            const editButtons = document.querySelectorAll('.edit-user-btn');
+            const deleteButtons = document.querySelectorAll('.delete-user-btn');
+            const changePasswordButtons = document.querySelectorAll('.change-password-btn');
+
+            editButtons.forEach(btn => {
+                btn.style.display = canEditUser ? 'inline-flex' : 'none';
+            });
+
+            deleteButtons.forEach(btn => {
+                btn.style.display = canDeleteUser ? 'inline-flex' : 'none';
+            });
+
+            changePasswordButtons.forEach(btn => {
+                btn.style.display = canChangePassword ? 'inline-flex' : 'none';
+            });
+
+            console.log('🔧 Action buttons updated:', {
+                permissionLevel: permissions?.level,
+                isAdminLevel,
+                isViewOnly,
+                editButtons: editButtons.length,
+                deleteButtons: deleteButtons.length,
+                changePasswordButtons: changePasswordButtons.length,
+                canEditUser,
+                canDeleteUser,
+                canChangePassword
+            });
+        }
+
+        // Check user permissions (legacy function - kept for compatibility)
+        function checkPermissions() {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                currentUser = JSON.parse(userStr);
+
+                // Show/hide admin-only buttons
+                const deleteAllBtn = document.getElementById('deleteAllBtn');
+                const importBtn = document.getElementById('importUserBtn');
+
+                if (currentUser.roles && (currentUser.roles.includes('Admin') || currentUser.roles.includes('ADMIN'))) {
+                    if (deleteAllBtn) deleteAllBtn.style.display = 'inline-flex';
+                    if (importBtn) importBtn.style.display = 'inline-flex';
+                } else {
+                    if (deleteAllBtn) deleteAllBtn.style.display = 'none';
+                    // Import might be available to other roles, check permissions
+                }
+            }
+        }
+
+        function openAddUserModal() {
+            isEditMode = false;
+            document.getElementById('modalTitle').textContent = 'Thêm người dùng mới';
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('passwordGroup').style.display = 'block';
+            document.getElementById('statusGroup').style.display = 'none';
+            document.getElementById('password').required = true;
+
+            // Clear all errors
+            clearFormErrors();
+
+            // Load roles and teams
+            loadRolesAndTeams();
+
+            // Set default join date to today
+            document.getElementById('joinDate').value = new Date().toISOString().split('T')[0];
+
+            document.getElementById('userModal').style.display = 'flex';
+        }
+
+        async function editUser(userId) {
+            isEditMode = true;
+            document.getElementById('modalTitle').textContent = 'Chỉnh sửa người dùng';
+            document.getElementById('passwordGroup').style.display = 'none';
+            document.getElementById('statusGroup').style.display = 'block';
+            document.getElementById('password').required = false;
+
+            // Clear all errors
+            clearFormErrors();
+
+            try {
+                // Load user data
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (handleAuthError(response, 'loading user data')) {
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    const user = data.user;
+
+                    // Fill form with user data
+                    document.getElementById('userId').value = user.id;
+                    document.getElementById('username').value = user.username;
+                    document.getElementById('fullName').value = user.full_name;
+                    document.getElementById('email').value = user.email || '';
+                    document.getElementById('phone').value = user.phone || '';
+                    document.getElementById('joinDate').value = user.join_date ? user.join_date.split('T')[0] : '';
+                    document.getElementById('leaveDate').value = user.leave_date ? user.leave_date.split('T')[0] : '';
+                    document.getElementById('isActive').checked = user.is_active;
+
+                    // Load roles and teams, then select user's current ones
+                    await loadRolesAndTeams();
+
+                    // Select user's role by role_code
+                    const rolesSelect = document.getElementById('roles');
+                    if (user.role_code) {
+                        Array.from(rolesSelect.options).forEach(option => {
+                            option.selected = option.getAttribute('data-code') === user.role_code;
+                        });
+                        console.log(`Selected role: ${user.role_code}`);
+                    } else if (user.role_ids && Array.isArray(user.role_ids)) {
+                        // Fallback to role_ids if role_code not available
+                        Array.from(rolesSelect.options).forEach(option => {
+                            option.selected = user.role_ids.includes(parseInt(option.value));
+                        });
+                    } else {
+                        console.log('No role_code or role_ids found for user');
+                    }
+
+                    // Select user's team by team_code
+                    const teamsSelect = document.getElementById('teams');
+                    if (user.team_code) {
+                        Array.from(teamsSelect.options).forEach(option => {
+                            option.selected = option.getAttribute('data-code') === user.team_code;
+                        });
+                        console.log(`Selected team: ${user.team_code}`);
+                    } else if (user.team_ids && Array.isArray(user.team_ids)) {
+                        // Fallback to team_ids if team_code not available
+                        Array.from(teamsSelect.options).forEach(option => {
+                            option.selected = user.team_ids.includes(parseInt(option.value));
+                        });
+                    } else {
+                        console.log('No team_code or team_ids found for user');
+                    }
+
+                    document.getElementById('userModal').style.display = 'flex';
+                } else {
+                    showError(data.error || 'Failed to load user data');
+                }
+            } catch (error) {
+                console.error('Edit user error:', error);
+                showError('Không thể tải thông tin người dùng');
+            }
+        }
+
+        // Deactivate single user (Soft Delete)
+        async function deactivateUser(userId) {
+            if (!confirm('Bạn có chắc chắn muốn vô hiệu hóa người dùng này?\n\nNgười dùng sẽ không thể đăng nhập nhưng dữ liệu vẫn được giữ lại.')) {
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (handleAuthError(response, 'deactivating user')) {
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Người dùng đã được vô hiệu hóa thành công');
+                    await autoRefreshUsers();
+                    // Reset delete button state after refresh
+                    setTimeout(() => updateDeleteAllButton(), 100);
+                } else {
+                    showError(data.error || 'Không thể vô hiệu hóa người dùng');
+                }
+            } catch (error) {
+                console.error('Deactivate user error:', error);
+                showError('Có lỗi xảy ra khi vô hiệu hóa người dùng');
+            }
+        }
+
+        // Legacy function - now calls deactivateUser
+        async function deleteUser(userId) {
+            await deactivateUser(userId);
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').style.display = 'none';
+            document.getElementById('userForm').reset();
+            clearFormErrors();
+        }
+
+        async function loadRolesAndTeams() {
+            try {
+                // Get token with fallback
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+
+                if (!token) {
+                    console.error('No authentication token found');
+                    showError('Vui lòng đăng nhập lại');
+                    return;
+                }
+
+                console.log('Loading roles and teams...');
+
+                // Load roles
+                const rolesResponse = await fetch('http://localhost:3001/api/roles');
+
+                console.log('Roles response status:', rolesResponse.status);
+
+                if (handleAuthError(rolesResponse, 'loading roles')) {
+                    return;
+                }
+
+                if (rolesResponse.ok) {
+                    const rolesData = await rolesResponse.json();
+                    console.log('Roles data:', rolesData);
+
+                    const rolesSelect = document.getElementById('roles');
+                    if (rolesSelect) {
+                        rolesSelect.innerHTML = '';
+
+                        if (rolesData.roles && rolesData.roles.length > 0) {
+                            rolesData.roles.forEach(role => {
+                                const option = document.createElement('option');
+                                option.value = role.id;
+                                option.setAttribute('data-code', role.role_code);
+                                option.textContent = `${role.role_name} (${role.role_code})`;
+                                rolesSelect.appendChild(option);
+                            });
+                            console.log(`Loaded ${rolesData.roles.length} roles`);
+                        } else {
+                            console.warn('No roles data received');
+                        }
+                    }
+                } else {
+                    console.error('Failed to load roles:', rolesResponse.status, rolesResponse.statusText);
+                }
+
+                // Load teams
+                const teamsResponse = await fetch('http://localhost:3001/api/teams');
+
+                console.log('Teams response status:', teamsResponse.status);
+
+                if (handleAuthError(teamsResponse, 'loading teams')) {
+                    return;
+                }
+
+                if (teamsResponse.ok) {
+                    const teamsData = await teamsResponse.json();
+                    console.log('Teams data:', teamsData);
+
+                    const teamsSelect = document.getElementById('teams');
+                    if (teamsSelect) {
+                        teamsSelect.innerHTML = '';
+
+                        if (teamsData.teams && teamsData.teams.length > 0) {
+                            teamsData.teams.forEach(team => {
+                                const option = document.createElement('option');
+                                option.value = team.id;
+                                option.setAttribute('data-code', team.team_code);
+                                option.textContent = `${team.team_name} (${team.team_code})`;
+                                teamsSelect.appendChild(option);
+                            });
+                            console.log(`Loaded ${teamsData.teams.length} teams`);
+                        } else {
+                            console.warn('No teams data received');
+                        }
+                    }
+                } else {
+                    console.error('Failed to load teams:', teamsResponse.status, teamsResponse.statusText);
+                }
+            } catch (error) {
+                console.error('Load roles and teams error:', error);
+                showError('Không thể tải danh sách vai trò và nhóm: ' + error.message);
+            }
+        }
+
+        async function saveUser() {
+            // Clear previous errors
+            clearFormErrors();
+
+            // Get form data
+            const formData = {
+                username: document.getElementById('username').value.trim(),
+                full_name: document.getElementById('fullName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                join_date: document.getElementById('joinDate').value
+            };
+
+            // Get selected role and team codes
+            const selectedRoleOption = document.getElementById('roles').selectedOptions[0];
+            const selectedTeamOption = document.getElementById('teams').selectedOptions[0];
+
+            if (selectedRoleOption) {
+                formData.role_code = selectedRoleOption.getAttribute('data-code') || selectedRoleOption.textContent.match(/\(([^)]+)\)/)?.[1] || 'DEV';
+            }
+
+            if (selectedTeamOption) {
+                formData.team_code = selectedTeamOption.getAttribute('data-code') || selectedTeamOption.textContent.match(/\(([^)]+)\)/)?.[1] || 'T1';
+            }
+
+            // Add password for new users
+            if (!isEditMode) {
+                formData.password = document.getElementById('password').value;
+            } else {
+                formData.is_active = document.getElementById('isActive').checked;
+                formData.leave_date = document.getElementById('leaveDate').value;
+            }
+
+            // Validate form
+            if (!validateForm(formData)) {
+                return;
+            }
+
+            // Show loading state
+            const saveBtn = document.getElementById('saveBtn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
+            saveBtn.disabled = true;
+
+            try {
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                const url = isEditMode ? `http://localhost:3001/api/users/${document.getElementById('userId').value}` : 'http://localhost:3001/api/users';
+                const method = isEditMode ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (handleAuthError(response, 'saving user')) {
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess(isEditMode ? 'Cập nhật người dùng thành công' : 'Thêm người dùng thành công');
+                    closeUserModal();
+
+                    // Auto refresh user list with loading indicator
+                    await autoRefreshUsers();
+                } else {
+                    showError(data.error || 'Có lỗi xảy ra khi lưu thông tin người dùng');
+                }
+            } catch (error) {
+                console.error('Save user error:', error);
+                showError('Có lỗi xảy ra khi lưu thông tin người dùng');
+            } finally {
+                // Restore button state
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+            }
+        }
+
+        function validateForm(formData) {
+            let isValid = true;
+
+            // Username validation
+            if (!formData.username) {
+                showFieldError('usernameError', 'Tên đăng nhập là bắt buộc');
+                isValid = false;
+            } else if (formData.username.length < 3) {
+                showFieldError('usernameError', 'Tên đăng nhập phải có ít nhất 3 ký tự');
+                isValid = false;
+            } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
+                showFieldError('usernameError', 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới');
+                isValid = false;
+            }
+
+            // Full name validation
+            if (!formData.full_name) {
+                showFieldError('fullNameError', 'Họ và tên là bắt buộc');
+                isValid = false;
+            } else if (formData.full_name.length < 2) {
+                showFieldError('fullNameError', 'Họ và tên phải có ít nhất 2 ký tự');
+                isValid = false;
+            }
+
+            // Email validation
+            if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+                showFieldError('emailError', 'Định dạng email không hợp lệ');
+                isValid = false;
+            }
+
+            // Phone validation
+            if (formData.phone && !/^[0-9+\-\s()]+$/.test(formData.phone)) {
+                showFieldError('phoneError', 'Số điện thoại không hợp lệ');
+                isValid = false;
+            }
+
+            // Password validation for new users
+            if (!isEditMode) {
+                if (!formData.password) {
+                    showFieldError('passwordError', 'Mật khẩu là bắt buộc');
+                    isValid = false;
+                } else if (formData.password.length < 6) {
+                    showFieldError('passwordError', 'Mật khẩu phải có ít nhất 6 ký tự');
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        function showFieldError(fieldId, message) {
+            const errorElement = document.getElementById(fieldId);
+            if (errorElement) {
+                errorElement.textContent = message;
+            }
+        }
+
+        function clearFormErrors() {
+            const errorElements = document.querySelectorAll('.field-error');
+            errorElements.forEach(element => {
+                element.textContent = '';
+            });
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('userModal');
+            if (event.target === modal) {
+                closeUserModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const userModal = document.getElementById('userModal');
+                const importModal = document.getElementById('importModal');
+
+                if (userModal.style.display === 'flex') {
+                    closeUserModal();
+                } else if (importModal.style.display === 'flex') {
+                    closeImportModal();
+                }
+            }
+        });
+
+        // Import functions
+        function openImportModal() {
+            document.getElementById('importModal').style.display = 'flex';
+            document.getElementById('importFile').value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('importProgress').style.display = 'none';
+            document.getElementById('importResults').style.display = 'none';
+
+            // Reset buttons to initial state
+            const importBtn = document.getElementById('importBtn');
+            const cancelBtn = document.querySelector('#importModal .btn-outline');
+
+            importBtn.innerHTML = '<i class="fas fa-upload"></i> Import';
+            importBtn.disabled = true;
+            importBtn.onclick = startImport;
+            importBtn.className = 'btn btn-primary';
+
+            cancelBtn.style.display = 'inline-block';
+        }
+
+        function closeImportModal() {
+            document.getElementById('importModal').style.display = 'none';
+        }
+
+        // File selection handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('importFile');
+            if (fileInput) {
+                fileInput.addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    const fileInfo = document.getElementById('fileInfo');
+                    const importBtn = document.getElementById('importBtn');
+
+                    if (file) {
+                        if (file.type !== 'text/csv' && !file.name.toLowerCase().endsWith('.csv')) {
+                            showError('Chỉ chấp nhận file CSV');
+                            fileInput.value = '';
+                            fileInfo.style.display = 'none';
+                            importBtn.disabled = true;
+                            return;
+                        }
+
+                        if (file.size > 5 * 1024 * 1024) {
+                            showError('File quá lớn (tối đa 5MB)');
+                            fileInput.value = '';
+                            fileInfo.style.display = 'none';
+                            importBtn.disabled = true;
+                            return;
+                        }
+
+                        fileInfo.textContent = `Đã chọn: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                        fileInfo.style.display = 'block';
+                        importBtn.disabled = false;
+                    } else {
+                        fileInfo.style.display = 'none';
+                        importBtn.disabled = true;
+                    }
+                });
+            }
+        });
+
+        async function startImport() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showError('Vui lòng chọn file để import');
+                return;
+            }
+
+            // Show progress
+            document.getElementById('importProgress').style.display = 'block';
+            document.getElementById('importResults').style.display = 'none';
+            document.getElementById('importBtn').disabled = true;
+            document.getElementById('progressText').textContent = 'Đang đọc file...';
+
+            try {
+                // Read file content as text
+                const csvData = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.onerror = (e) => reject(e);
+                    reader.readAsText(file, 'UTF-8');
+                });
+
+                console.log('📄 CSV data read:', csvData.length, 'characters');
+                document.getElementById('progressText').textContent = 'Đang gửi dữ liệu...';
+
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                const response = await fetch('http://localhost:3001/api/users/import', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ csvData: csvData })
+                });
+
+                if (handleAuthError(response, 'importing users')) {
+                    document.getElementById('importProgress').style.display = 'none';
+                    return;
+                }
+
+                const data = await response.json();
+
+                // Hide progress
+                document.getElementById('importProgress').style.display = 'none';
+
+                if (data.success) {
+                    // Show results
+                    document.getElementById('importResults').style.display = 'block';
+                    document.getElementById('importSummary').innerHTML = `
+                        <p style="color: #00ff88;"><strong>${data.message}</strong></p>
+                        <p>Thành công: ${data.results.success} | Thất bại: ${data.results.failed}</p>
+                    `;
+
+                    if (data.results.errors.length > 0) {
+                        document.getElementById('importErrors').innerHTML = `
+                            <strong>Lỗi chi tiết:</strong><br>
+                            ${data.results.errors.map(error => `• ${error}`).join('<br>')}
+                        `;
+                    } else {
+                        document.getElementById('importErrors').innerHTML = '';
+                    }
+
+                    // Change button to "Close" after successful import
+                    const importBtn = document.getElementById('importBtn');
+                    const cancelBtn = document.querySelector('#importModal .btn-outline');
+
+                    importBtn.innerHTML = '<i class="fas fa-check"></i> Đóng';
+                    importBtn.disabled = false;
+                    importBtn.onclick = closeImportModal;
+                    importBtn.className = 'btn btn-success';
+
+                    // Hide cancel button since we now have close button
+                    cancelBtn.style.display = 'none';
+
+                    // Auto refresh user list if any users were imported
+                    if (data.results.success > 0) {
+                        await autoRefreshUsers();
+                        showSuccess(`Import thành công: ${data.results.success} user đã được thêm`);
+                    }
+                } else {
+                    showError(data.error || 'Import thất bại');
+                    if (data.errors) {
+                        document.getElementById('importResults').style.display = 'block';
+                        document.getElementById('importSummary').innerHTML = `<p style="color: #ff4d4f;"><strong>Import thất bại</strong></p>`;
+                        document.getElementById('importErrors').innerHTML = `
+                            <strong>Lỗi:</strong><br>
+                            ${data.errors.map(error => `• ${error}`).join('<br>')}
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Import error:', error);
+                showError('Có lỗi xảy ra khi import file');
+                document.getElementById('importProgress').style.display = 'none';
+            } finally {
+                document.getElementById('importBtn').disabled = false;
+            }
+        }
+
+        async function downloadTemplate() {
+            try {
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                console.log('Download template - Token exists:', !!token);
+
+                if (!token) {
+                    showError('Vui lòng đăng nhập lại để tải template');
+                    return;
+                }
+
+                console.log('Fetching template from API...');
+                const response = await fetch('http://localhost:3001/api/users/import/template', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log('Template response status:', response.status);
+                console.log('Template response headers:', response.headers);
+
+                if (handleAuthError(response, 'downloading template')) {
+                    return;
+                }
+
+                if (response.ok) {
+                    console.log('Template response OK, creating blob...');
+                    const blob = await response.blob();
+                    console.log('Blob created, size:', blob.size);
+
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'user_import_template.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showSuccess('Template đã được tải xuống');
+                } else {
+                    const errorText = await response.text();
+                    console.error('Template download failed:', response.status, errorText);
+                    showError(`Không thể tải template (${response.status}): ${errorText}`);
+                }
+            } catch (error) {
+                console.error('Download template error:', error);
+                showError('Có lỗi xảy ra khi tải template: ' + error.message);
+            }
+        }
+
+        // Dropdown toggle function
+        function toggleDeleteDropdown() {
+            const dropdown = document.getElementById('deleteDropdownMenu');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('deleteDropdownMenu');
+            const deleteBtn = document.getElementById('deleteAllBtn');
+
+            if (dropdown && !deleteBtn.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Legacy function for backward compatibility
+        async function deleteAllUsers() {
+            await deactivateUsers();
+        }
+
+        // Soft Delete (Deactivate) - Current behavior
+        async function deactivateUsers() {
+            const selectedUserIds = getSelectedUserIds();
+
+            if (selectedUserIds.length > 0) {
+                await deactivateSelectedUsers(selectedUserIds);
+            } else {
+                await deactivateAllUsers();
+            }
+        }
+
+        // Hard Delete (Permanent) - New functionality
+        async function permanentDeleteUsers() {
+            const selectedUserIds = getSelectedUserIds();
+
+            if (selectedUserIds.length > 0) {
+                await permanentDeleteSelectedUsers(selectedUserIds);
+            } else {
+                await permanentDeleteAllUsers();
+            }
+        }
+
+        // Deactivate selected users (Soft Delete)
+        async function deactivateSelectedUsers(userIds) {
+            const confirmation = confirm(
+                `Bạn có chắc chắn muốn VÔ HIỆU HÓA ${userIds.length} người dùng đã chọn?\n\n` +
+                'Users sẽ không thể đăng nhập nhưng dữ liệu vẫn được giữ lại.\n' +
+                'Có thể khôi phục sau này.'
+            );
+
+            if (!confirmation) {
+                return;
+            }
+
+            await performBulkUserAction(userIds, 'deactivate', 'vô hiệu hóa');
+        }
+
+        // Permanent delete selected users (Hard Delete)
+        async function permanentDeleteSelectedUsers(userIds) {
+            const confirmation = confirm(
+                `⚠️ CẢNH BÁO: Bạn sắp XÓA VĨNH VIỄN ${userIds.length} người dùng!\n\n` +
+                'Hành động này sẽ:\n' +
+                '• Xóa hoàn toàn khỏi database\n' +
+                '• Không thể khôi phục\n' +
+                '• Mất tất cả dữ liệu liên quan\n\n' +
+                'Bạn có chắc chắn muốn tiếp tục?'
+            );
+
+            if (!confirmation) {
+                return;
+            }
+
+            const finalConfirm = prompt(
+                'Để xác nhận xóa vĩnh viễn, vui lòng nhập: PERMANENT DELETE'
+            );
+
+            if (finalConfirm === null) {
+                // User clicked Cancel
+                return;
+            }
+
+            if (finalConfirm !== 'PERMANENT DELETE') {
+                showError('Từ xác nhận không đúng! Vui lòng nhập chính xác: PERMANENT DELETE');
+                return;
+            }
+
+            await performBulkUserAction(userIds, 'permanent', 'xóa vĩnh viễn');
+        }
+
+        // Generic function to perform bulk user actions
+        async function performBulkUserAction(userIds, action, actionText) {
+            try {
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                let successCount = 0;
+                let errorCount = 0;
+
+                for (const userId of userIds) {
+                    try {
+                        let endpoint = `http://localhost:3001/api/users/${userId}`;
+                        if (action === 'permanent') {
+                            endpoint += '/permanent';
+                        }
+
+                        const response = await fetch(endpoint, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            successCount++;
+                        } else {
+                            errorCount++;
+                        }
+                    } catch (error) {
+                        errorCount++;
+                    }
+                }
+
+                if (successCount > 0) {
+                    showSuccess(`Đã ${actionText} ${successCount} người dùng`);
+                    await autoRefreshUsers();
+                    // Reset delete button state after refresh
+                    setTimeout(() => updateDeleteAllButton(), 100);
+                }
+
+                if (errorCount > 0) {
+                    showError(`Có ${errorCount} người dùng không thể ${actionText}`);
+                }
+
+            } catch (error) {
+                console.error(`${action} users error:`, error);
+                showError(`Có lỗi xảy ra khi ${actionText} người dùng`);
+            }
+        }
+
+        // Legacy function - now calls deactivateSelectedUsers
+        async function deleteSelectedUsers(userIds) {
+            const confirmation = confirm(
+                `Bạn có chắc chắn muốn xóa ${userIds.length} người dùng đã chọn?\n\n` +
+                'Hành động này không thể hoàn tác.'
+            );
+
+            if (!confirmation) {
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+
+                // Delete users one by one (since we don't have bulk delete by IDs endpoint)
+                let successCount = 0;
+                let errorCount = 0;
+
+                for (const userId of userIds) {
+                    try {
+                        const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            successCount++;
+                        } else {
+                            errorCount++;
+                        }
+                    } catch (error) {
+                        errorCount++;
+                    }
+                }
+
+                if (successCount > 0) {
+                    showSuccess(`Đã xóa ${successCount} người dùng`);
+                    await autoRefreshUsers();
+                }
+
+                if (errorCount > 0) {
+                    showError(`Có ${errorCount} người dùng không thể xóa`);
+                }
+
+            } catch (error) {
+                console.error('Delete selected users error:', error);
+                showError('Có lỗi xảy ra khi xóa người dùng');
+            }
+        }
+
+        // Deactivate all users (Soft Delete)
+        async function deactivateAllUsers() {
+            const confirmation = prompt(
+                'CẢNH BÁO: Bạn sắp VÔ HIỆU HÓA tất cả người dùng (trừ admin)!\n\n' +
+                'Users sẽ không thể đăng nhập nhưng dữ liệu vẫn được giữ lại.\n' +
+                'Có thể khôi phục sau này.\n\n' +
+                'Để xác nhận, vui lòng nhập: DEACTIVATE ALL'
+            );
+
+            if (confirmation !== 'DEACTIVATE ALL') {
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                const response = await fetch('http://localhost:3001/api/users/bulk/all', {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (handleAuthError(response, 'deactivating all users')) {
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess(`Đã vô hiệu hóa ${data.affected_rows} người dùng`);
+                    await autoRefreshUsers();
+                    // Reset delete button state after refresh
+                    setTimeout(() => updateDeleteAllButton(), 100);
+                } else {
+                    showError(data.error || 'Không thể vô hiệu hóa người dùng');
+                }
+            } catch (error) {
+                console.error('Deactivate all users error:', error);
+                showError('Có lỗi xảy ra khi vô hiệu hóa người dùng');
+            }
+        }
+
+        // Permanent delete all users (Hard Delete)
+        async function permanentDeleteAllUsers() {
+            const confirmation = prompt(
+                '🚨 NGUY HIỂM: Bạn sắp XÓA VĨNH VIỄN tất cả người dùng!\n\n' +
+                'Hành động này sẽ:\n' +
+                '• Xóa hoàn toàn khỏi database\n' +
+                '• Không thể khôi phục\n' +
+                '• Mất tất cả dữ liệu\n\n' +
+                'Để xác nhận, vui lòng nhập: PERMANENT DELETE ALL'
+            );
+
+            if (confirmation === null) {
+                // User clicked Cancel
+                return;
+            }
+
+            if (confirmation !== 'PERMANENT DELETE ALL') {
+                showError('Từ xác nhận không đúng! Vui lòng nhập chính xác: PERMANENT DELETE ALL');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                const response = await fetch('http://localhost:3001/api/users/bulk/all?permanent=true', {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (handleAuthError(response, 'permanently deleting all users')) {
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess(`Đã xóa vĩnh viễn ${data.affected_rows} người dùng`);
+                    await autoRefreshUsers();
+                    // Reset delete button state after refresh
+                    setTimeout(() => updateDeleteAllButton(), 100);
+                } else {
+                    showError(data.error || 'Không thể xóa vĩnh viễn người dùng');
+                }
+            } catch (error) {
+                console.error('Permanent delete all users error:', error);
+                showError('Có lỗi xảy ra khi xóa vĩnh viễn người dùng');
+            }
+        }
+
+        // Legacy function - now calls deactivateAllUsers
+        async function deleteAllUsersConfirm() {
+            const confirmation = prompt(
+                'CẢNH BÁO: Bạn sắp xóa TẤT CẢ người dùng (trừ admin)!\n\n' +
+                'Hành động này không thể hoàn tác.\n\n' +
+                'Để xác nhận, vui lòng nhập: DELETE ALL'
+            );
+
+            if (confirmation === null) {
+                // User clicked Cancel
+                return;
+            }
+
+            if (confirmation !== 'DELETE ALL') {
+                showError('Từ xác nhận không đúng! Vui lòng nhập chính xác: DELETE ALL');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                const response = await fetch('http://localhost:3001/api/users/bulk/all', {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (handleAuthError(response, 'deleting all users')) {
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess(`Đã xóa ${data.affected_rows} người dùng`);
+                    await autoRefreshUsers();
+                } else {
+                    showError(data.error || 'Không thể xóa người dùng');
+                }
+            } catch (error) {
+                console.error('Delete all users error:', error);
+                showError('Có lỗi xảy ra khi xóa người dùng');
+            }
+        }
+
+        // Check if response is 401/403 and show session expired notification
+        function handleAuthError(response, context = '') {
+            if (response.status === 401 || response.status === 403) {
+                showSessionExpiredNotification();
+                return true;
+            }
+            return false;
+        }
+
+        function showSessionExpiredNotification() {
+            // Create session expired notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #ff4d4f;
+                color: white;
+                padding: 16px 24px;
+                border-radius: 8px;
+                z-index: 2000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                max-width: 400px;
+                font-size: 14px;
+                line-height: 1.4;
+            `;
+
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 18px;"></i>
+                    <div>
+                        <strong>Phiên đăng nhập đã hết hạn</strong><br>
+                        Vui lòng đăng nhập lại để tiếp tục sử dụng.
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()"
+                            style="background: none; border: none; color: white; font-size: 18px; cursor: pointer; padding: 0; margin-left: auto;">
+                        &times;
+                    </button>
+                </div>
+                <div style="margin-top: 12px;">
+                    <button onclick="window.location.href='/auth/login.html'"
+                            style="background: white; color: #ff4d4f; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 500;">
+                        Đăng nhập lại
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto remove after 10 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 10000);
+        }
+
+        // Show roles and teams mapping modal
+        async function showRolesTeamsMapping() {
+            try {
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                const response = await fetch('http://localhost:3001/api/users/import/mapping', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (handleAuthError(response, 'loading mapping')) {
+                    return;
+                }
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Display roles
+                    const rolesHtml = data.roles.map(role =>
+                        `<div style="margin-bottom: 5px;">${role.id}. ${role.role_name} (${role.role_code})</div>`
+                    ).join('');
+                    document.getElementById('rolesMapping').innerHTML = rolesHtml;
+
+                    // Display teams
+                    const teamsHtml = data.teams.map(team =>
+                        `<div style="margin-bottom: 5px;">${team.id}. ${team.team_name} <span style="color: #888;">(${team.layer})</span></div>`
+                    ).join('');
+                    document.getElementById('teamsMapping').innerHTML = teamsHtml;
+
+                    // Show modal
+                    document.getElementById('mappingModal').style.display = 'flex';
+                } else {
+                    showError('Không thể tải danh sách roles và teams');
+                }
+            } catch (error) {
+                console.error('Load mapping error:', error);
+                showError('Có lỗi xảy ra khi tải danh sách roles và teams');
+            }
+        }
+
+        function closeMappingModal() {
+            document.getElementById('mappingModal').style.display = 'none';
+        }
+
+        // Checkbox selection functions
+        function toggleSelectAllUsers() {
+            const selectAllCheckbox = document.getElementById('selectAllUsers');
+            const userCheckboxes = document.querySelectorAll('.user-checkbox');
+
+            userCheckboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+
+            updateDeleteAllButton();
+        }
+
+        function toggleUserSelection(userId) {
+            const checkbox = document.querySelector(`.user-checkbox[value="${userId}"]`);
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+            }
+            updateSelectAllCheckbox();
+            updateDeleteAllButton();
+        }
+
+        function updateSelectAllCheckbox() {
+            const selectAllCheckbox = document.getElementById('selectAllUsers');
+            const userCheckboxes = document.querySelectorAll('.user-checkbox');
+            const checkedCheckboxes = document.querySelectorAll('.user-checkbox:checked');
+
+            if (userCheckboxes.length === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedCheckboxes.length === userCheckboxes.length) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedCheckboxes.length > 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            }
+        }
+
+        function updateDeleteAllButton() {
+            const deleteAllBtn = document.getElementById('deleteAllBtn');
+            const deleteButton = deleteAllBtn?.querySelector('.dropdown-toggle');
+            const checkedCheckboxes = document.querySelectorAll('.user-checkbox:checked');
+
+            if (deleteButton) {
+                if (checkedCheckboxes.length > 0) {
+                    deleteButton.innerHTML = `
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Xóa đã chọn (${checkedCheckboxes.length})</span>
+                        <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 10px;"></i>
+                    `;
+                    deleteButton.title = `Xóa ${checkedCheckboxes.length} người dùng đã chọn`;
+                } else {
+                    deleteButton.innerHTML = `
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Xóa tất cả</span>
+                        <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 10px;"></i>
+                    `;
+                    deleteButton.title = 'Xóa tất cả người dùng';
+                }
+            }
+        }
+
+        function getSelectedUserIds() {
+            const checkedCheckboxes = document.querySelectorAll('.user-checkbox:checked');
+            return Array.from(checkedCheckboxes).map(checkbox => parseInt(checkbox.value));
+        }
+
+
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            // Simple success notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #d4edda;
+                color: #155724;
+                padding: 12px 20px;
+                border-radius: 6px;
+                z-index: 1000;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
+        }
+
+        function logout() {
+            if (window.authManager) {
+                window.authManager.logout();
+            }
+        }
+
+        // Sidebar toggle function
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // Submenu toggle
+        function toggleSubmenu(element) {
+            const submenu = element.nextElementSibling;
+            const arrow = element.querySelector('.submenu-arrow');
+
+            if (submenu.style.display === 'block') {
+                submenu.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+                element.classList.remove('expanded');
+            } else {
+                submenu.style.display = 'block';
+                arrow.style.transform = 'rotate(180deg)';
+                element.classList.add('expanded');
+            }
+        }
+
+        // Change Password Functions
+        async function openChangePasswordModal(userId, username) {
+            try {
+                // Get user details to show full name
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        document.getElementById('changePasswordUserId').value = userId;
+                        document.getElementById('changePasswordUsername').textContent = username;
+                        document.getElementById('changePasswordFullName').textContent = data.user.full_name || 'N/A';
+                    }
+                } else {
+                    // Fallback if can't get user details
+                    document.getElementById('changePasswordUserId').value = userId;
+                    document.getElementById('changePasswordUsername').textContent = username;
+                    document.getElementById('changePasswordFullName').textContent = 'N/A';
+                }
+
+                document.getElementById('changePasswordForm').reset();
+                clearChangePasswordErrors();
+                document.getElementById('changePasswordModal').style.display = 'flex';
+
+                // Focus on first input
+                setTimeout(() => {
+                    document.getElementById('newPassword').focus();
+                }, 100);
+
+            } catch (error) {
+                console.error('Error opening change password modal:', error);
+                // Fallback
+                document.getElementById('changePasswordUserId').value = userId;
+                document.getElementById('changePasswordUsername').textContent = username;
+                document.getElementById('changePasswordFullName').textContent = 'N/A';
+                document.getElementById('changePasswordForm').reset();
+                clearChangePasswordErrors();
+                document.getElementById('changePasswordModal').style.display = 'flex';
+            }
+        }
+
+        function closeChangePasswordModal() {
+            document.getElementById('changePasswordModal').style.display = 'none';
+            document.getElementById('changePasswordForm').reset();
+            clearChangePasswordErrors();
+        }
+
+        function clearChangePasswordErrors() {
+            document.getElementById('newPasswordError').textContent = '';
+            document.getElementById('confirmPasswordError').textContent = '';
+        }
+
+        async function changeUserPassword() {
+            clearChangePasswordErrors();
+
+            const userId = document.getElementById('changePasswordUserId').value;
+            const newPassword = document.getElementById('newPassword').value.trim();
+            const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+            // Validate new password
+            if (!newPassword) {
+                document.getElementById('newPasswordError').textContent = 'Vui lòng nhập mật khẩu mới';
+                document.getElementById('newPassword').focus();
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                document.getElementById('newPasswordError').textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
+                document.getElementById('newPassword').focus();
+                return;
+            }
+
+            // Validate confirm password
+            if (!confirmPassword) {
+                document.getElementById('confirmPasswordError').textContent = 'Vui lòng xác nhận mật khẩu';
+                document.getElementById('confirmPassword').focus();
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                document.getElementById('confirmPasswordError').textContent = 'Mật khẩu xác nhận không khớp';
+                document.getElementById('confirmPassword').focus();
+                return;
+            }
+
+            // Show loading state
+            const changePasswordBtn = document.getElementById('changePasswordBtn');
+            const originalText = changePasswordBtn.innerHTML;
+            changePasswordBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang đổi...';
+            changePasswordBtn.disabled = true;
+
+            try {
+                const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                const response = await fetch(`http://localhost:3001/api/users/${userId}/password`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        new_password: newPassword
+                    })
+                });
+
+                if (handleAuthError(response, 'changing password')) {
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Đổi mật khẩu thành công');
+                    closeChangePasswordModal();
+                } else {
+                    showError(data.error || 'Có lỗi xảy ra khi đổi mật khẩu');
+                }
+            } catch (error) {
+                console.error('Change password error:', error);
+                showError('Có lỗi xảy ra khi đổi mật khẩu');
+            } finally {
+                // Restore button state
+                changePasswordBtn.innerHTML = originalText;
+                changePasswordBtn.disabled = false;
+            }
+        }
+
+        // Menu item click handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (this.getAttribute('href') === '#') {
+                        e.preventDefault();
+                    }
+
+                    // Remove active class from all items
+                    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+{
+  "task_status": [
+    {
+      "id": 1,
+      "status_code": "not-started",
+      "status_name": "Chưa bắt đầu",
+      "status_name_en": "Not Started",
+      "description": "Công việc chưa được bắt đầu thực hiện",
+      "color": "#6c757d",
+      "background_color": "#f8f9fa",
+      "progress_range": {
+        "min": 0,
+        "max": 0
+      },
+      "is_active": true,
+      "order": 1
+    },
+    {
+      "id": 2,
+      "status_code": "in-progress",
+      "status_name": "Đang thực hiện",
+      "status_name_en": "In Progress",
+      "description": "Công việc đang được thực hiện",
+      "color": "#007bff",
+      "background_color": "#e3f2fd",
+      "progress_range": {
+        "min": 1,
+        "max": 99
+      },
+      "is_active": true,
+      "order": 2
+    },
+    {
+      "id": 3,
+      "status_code": "pending-approval",
+      "status_name": "Chờ phê duyệt",
+      "status_name_en": "Pending Approval",
+      "description": "Công việc hoàn thành, chờ phê duyệt",
+      "color": "#ffc107",
+      "background_color": "#fff8e1",
+      "progress_range": {
+        "min": 100,
+        "max": 100
+      },
+      "is_active": true,
+      "order": 3
+    },
+    {
+      "id": 4,
+      "status_code": "approved",
+      "status_name": "Đã phê duyệt",
+      "status_name_en": "Approved",
+      "description": "Công việc đã được phê duyệt",
+      "color": "#28a745",
+      "background_color": "#e8f5e8",
+      "progress_range": {
+        "min": 100,
+        "max": 100
+      },
+      "is_active": true,
+      "order": 4
+    },
+    {
+      "id": 5,
+      "status_code": "completed",
+      "status_name": "Hoàn thành",
+      "status_name_en": "Completed",
+      "description": "Công việc đã hoàn thành",
+      "color": "#28a745",
+      "background_color": "#e8f5e8",
+      "progress_range": {
+        "min": 100,
+        "max": 100
+      },
+      "is_active": true,
+      "order": 5
+    },
+    {
+      "id": 6,
+      "status_code": "rejected",
+      "status_name": "Từ chối",
+      "status_name_en": "Rejected",
+      "description": "Công việc bị từ chối",
+      "color": "#dc3545",
+      "background_color": "#ffebee",
+      "progress_range": {
+        "min": 0,
+        "max": 100
+      },
+      "is_active": true,
+      "order": 6
+    },
+    {
+      "id": 7,
+      "status_code": "on-hold",
+      "status_name": "Tạm dừng",
+      "status_name_en": "On Hold",
+      "description": "Công việc tạm dừng",
+      "color": "#6f42c1",
+      "background_color": "#f3e5f5",
+      "progress_range": {
+        "min": 0,
+        "max": 100
+      },
+      "is_active": true,
+      "order": 7
+    },
+    {
+      "id": 8,
+      "status_code": "cancelled",
+      "status_name": "Đã hủy",
+      "status_name_en": "Cancelled",
+      "description": "Công việc đã bị hủy",
+      "color": "#6c757d",
+      "background_color": "#f8f9fa",
+      "progress_range": {
+        "min": 0,
+        "max": 100
+      },
+      "is_active": false,
+      "order": 8
+    }
+  ],
+  "status_transitions": [
+    {
+      "from": "not-started",
+      "to": ["in-progress", "cancelled"]
+    },
+    {
+      "from": "in-progress", 
+      "to": ["pending-approval", "completed", "on-hold", "cancelled"]
+    },
+    {
+      "from": "pending-approval",
+      "to": ["approved", "rejected", "in-progress"]
+    },
+    {
+      "from": "approved",
+      "to": ["completed"]
+    },
+    {
+      "from": "completed",
+      "to": []
+    },
+    {
+      "from": "rejected",
+      "to": ["in-progress", "cancelled"]
+    },
+    {
+      "from": "on-hold",
+      "to": ["in-progress", "cancelled"]
+    },
+    {
+      "from": "cancelled",
+      "to": []
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2024-12-17",
+    "updated_by": "admin",
+    "description": "KPI TT Cloud System Task Status Configuration"
+  }
+}

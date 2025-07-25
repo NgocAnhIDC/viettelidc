@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Frontend Fixes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Frontend Fixes Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Login API Response Format</h2>
+        <button onclick="testLogin()">Test Login</button>
+        <div id="loginResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Users API Response Format</h2>
+        <button onclick="testUsers()">Test Users API</button>
+        <div id="usersResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Task Categories API</h2>
+        <button onclick="testTaskCategories()">Test Task Categories</button>
+        <div id="categoriesResult"></div>
+    </div>
+
+    <script>
+        let authToken = '';
+
+        async function testLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            resultDiv.innerHTML = '<div class="info">Testing login...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'admin', password: 'admin123' })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Test new response format handling
+                    const apiData = data.data || data;
+                    const userData = apiData.user;
+                    
+                    authToken = apiData.token;
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ Login Test Passed!</div>
+                        <p><strong>Username:</strong> ${userData.username}</p>
+                        <p><strong>Full Name:</strong> ${userData.full_name}</p>
+                        <p><strong>Role Code:</strong> ${userData.role_code}</p>
+                        <p><strong>Teams:</strong> ${userData.teams.join(', ')}</p>
+                        <p><strong>Token Length:</strong> ${authToken.length}</p>
+                    `;
+                } else {
+                    throw new Error('Login failed: ' + (data.message || 'Unknown error'));
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Login Test Failed: ${error.message}</div>`;
+            }
+        }
+
+        async function testUsers() {
+            const resultDiv = document.getElementById('usersResult');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<div class="error">❌ Please login first</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="info">Testing users API...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/users', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Test new response format handling
+                    let users = [];
+                    if (data.data && data.data.users) {
+                        users = data.data.users;
+                    } else if (data.users) {
+                        users = data.users;
+                    }
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ Users API Test Passed!</div>
+                        <p><strong>Users Count:</strong> ${users.length}</p>
+                        <p><strong>Response Structure:</strong> ${data.data ? 'data.data.users' : 'data.users'}</p>
+                        <p><strong>First User:</strong> ${users[0] ? users[0].username : 'None'}</p>
+                    `;
+                } else {
+                    throw new Error('Users API failed: ' + (data.message || 'Unknown error'));
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Users API Test Failed: ${error.message}</div>`;
+            }
+        }
+
+        async function testTaskCategories() {
+            const resultDiv = document.getElementById('categoriesResult');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<div class="error">❌ Please login first</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="info">Testing task categories API...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/tasks/categories', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Test response format
+                    let categories = [];
+                    if (data.data && data.data.categories) {
+                        categories = data.data.categories;
+                    } else if (data.categories) {
+                        categories = data.categories;
+                    }
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ Task Categories Test Passed!</div>
+                        <p><strong>Categories Count:</strong> ${Array.isArray(categories) ? categories.length : 1}</p>
+                        <p><strong>Response Structure:</strong> ${data.data ? 'data.data.categories' : 'data.categories'}</p>
+                        <p><strong>Categories:</strong> ${Array.isArray(categories) ? categories.map(c => c.category_name).join(', ') : categories.category_name}</p>
+                    `;
+                } else {
+                    throw new Error('Categories API failed: ' + (data.message || 'Unknown error'));
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Categories API Test Failed: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

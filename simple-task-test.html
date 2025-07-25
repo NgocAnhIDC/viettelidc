@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Task Management Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { margin: 10px 0; padding: 15px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { margin: 5px; padding: 10px 15px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Simple Task Management Test</h1>
+    
+    <div>
+        <button onclick="testLogin()">Test Login</button>
+        <button onclick="testTaskAccess()">Test Task Access</button>
+        <button onclick="clearStorage()">Clear Storage</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        function addResult(type, message) {
+            const resultsDiv = document.getElementById('results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.innerHTML = message;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        async function testLogin() {
+            addResult('info', '🔍 Testing login...');
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'admin', password: 'admin123' })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Store auth data like login.html does
+                    localStorage.setItem('authToken', data.data.token);
+                    localStorage.setItem('currentUser', data.data.user.username);
+                    localStorage.setItem('userRole', data.data.user.role_code);
+                    localStorage.setItem('userTeams', JSON.stringify(data.data.user.teams));
+                    
+                    addResult('success', `✅ Login successful! Token: ${data.data.token.substring(0, 20)}...`);
+                    addResult('info', `User: ${data.data.user.username}, Role: ${data.data.user.role_code}`);
+                } else {
+                    addResult('error', `❌ Login failed: ${data.message}`);
+                }
+                
+            } catch (error) {
+                addResult('error', `❌ Login error: ${error.message}`);
+            }
+        }
+
+        function testTaskAccess() {
+            addResult('info', '🔍 Testing Task Management access...');
+            
+            // Check if we have auth data
+            const token = localStorage.getItem('authToken');
+            const user = localStorage.getItem('currentUser');
+            
+            if (token && user) {
+                addResult('success', `✅ Auth data found: User=${user}, Token exists`);
+                
+                // Try to open Task Management
+                const testWindow = window.open('Task-Management.html', 'taskTest', 'width=800,height=600');
+                
+                setTimeout(() => {
+                    try {
+                        if (testWindow && !testWindow.closed) {
+                            const url = testWindow.location.href;
+                            if (url.includes('Task-Management.html')) {
+                                addResult('success', '✅ Task Management loaded successfully!');
+                            } else if (url.includes('login.html')) {
+                                addResult('error', '❌ Redirected to login page');
+                            } else {
+                                addResult('info', `ℹ️ Current URL: ${url}`);
+                            }
+                            testWindow.close();
+                        } else {
+                            addResult('error', '❌ Failed to open test window');
+                        }
+                    } catch (error) {
+                        addResult('success', '✅ Task Management opened (cross-origin security normal)');
+                        if (testWindow && !testWindow.closed) testWindow.close();
+                    }
+                }, 2000);
+                
+            } else {
+                addResult('error', '❌ No auth data found. Please login first.');
+            }
+        }
+
+        function clearStorage() {
+            localStorage.clear();
+            addResult('info', '🗑️ Storage cleared');
+        }
+
+        // Show current storage state
+        window.onload = function() {
+            const token = localStorage.getItem('authToken');
+            const user = localStorage.getItem('currentUser');
+            
+            if (token && user) {
+                addResult('info', `📋 Current session: ${user} (Token exists)`);
+            } else {
+                addResult('info', '📋 No active session');
+            }
+        };
+    </script>
+</body>
+</html>

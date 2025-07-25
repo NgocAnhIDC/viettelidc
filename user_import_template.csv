@@ -1,0 +1,3 @@
+﻿STT,Username,Full Name,Email,Phone,Role Code,Team Code,Join Date,Is Active,Password
+1,emlatestuser,Trinh Văn Quyết,test1@abc.Com,1234567,CPO,T5,2025-01-07,TRUE,password123
+2,lai_la_test_user,Phạm Nhật Vượng,Test2@abc.Com,987755,PM,T6,2025-01-07,TRUE,password123

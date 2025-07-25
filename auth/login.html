@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI TT Cloud - Đăng nhập</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #00458b 0%, #1e3c72 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo i {
+            font-size: 48px;
+            color: #00458b;
+            margin-bottom: 10px;
+        }
+
+        .logo h1 {
+            color: #00458b;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 16px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #00458b;
+            box-shadow: 0 0 0 3px rgba(0, 69, 139, 0.1);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #00458b;
+        }
+
+        .forgot-password {
+            color: #00458b;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: #003366;
+            text-decoration: underline;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #00458b 0%, #1e3c72 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 69, 139, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #363;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            margin-left: 10px;
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .logo h1 {
+                font-size: 20px;
+            }
+            
+            .form-control {
+                padding: 12px 12px 12px 40px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <i class="fas fa-chart-line"></i>
+            <h1>KPI TT Cloud</h1>
+            <p>Hệ thống đo hiệu suất TT Cloud</p>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Tên đăng nhập</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" name="username" class="form-control" 
+                           placeholder="Nhập tên đăng nhập" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mật khẩu</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" class="form-control" 
+                           placeholder="Nhập mật khẩu" required>
+                </div>
+            </div>
+
+            <div class="form-options">
+                <div class="remember-me">
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    <label for="rememberMe">Ghi nhớ đăng nhập</label>
+                </div>
+                <a href="#" class="forgot-password" onclick="showForgotPassword()">Quên mật khẩu?</a>
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn">
+                Đăng nhập
+                <span class="loading" id="loading">
+                    <i class="fas fa-spinner"></i>
+                </span>
+            </button>
+        </form>
+
+        <div class="footer">
+            <p>&copy; 2025 Viettel IDC. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        // Authentication system
+        class AuthSystem {
+            constructor() {
+                this.sessionTimeout = 15 * 60 * 1000; // 15 minutes
+                this.sessionTimer = null;
+                this.init();
+            }
+
+            init() {
+                // Check if user is already logged in
+                this.checkExistingSession();
+                
+                // Setup form submission
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
+
+                // Setup session activity tracking
+                this.setupActivityTracking();
+            }
+
+            checkExistingSession() {
+                const token = localStorage.getItem('authToken');
+                const rememberMe = localStorage.getItem('rememberMe') === 'true';
+                
+                if (token && rememberMe) {
+                    // Validate token and redirect if valid
+                    this.validateToken(token);
+                }
+            }
+
+            async handleLogin() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
+
+                console.log('Login attempt:', username, password);
+                this.showLoading(true);
+                this.hideMessages();
+
+                try {
+                    const result = await this.authenticate(username, password);
+                    console.log('Authentication result:', result);
+
+                    if (result.success) {
+                        // Store authentication data
+                        localStorage.setItem('authToken', result.token);
+                        localStorage.setItem('currentUser', result.user.username);
+                        localStorage.setItem('userRole', result.user.role);
+                        localStorage.setItem('userTeams', JSON.stringify(result.user.teams));
+                        localStorage.setItem('userFullData', JSON.stringify(result.user));
+                        localStorage.setItem('rememberMe', rememberMe.toString());
+
+                        console.log('Stored auth data:', {
+                            token: result.token,
+                            user: result.user.username,
+                            role: result.user.role,
+                            teams: result.user.teams
+                        });
+
+                        // Start session timer
+                        this.startSessionTimer();
+
+                        this.showSuccess('Đăng nhập thành công! Đang chuyển hướng...');
+
+                        // Redirect after 1 second
+                        setTimeout(() => {
+                            console.log('Redirecting to Task Management...');
+                            try {
+                                // Redirect to Task Management (new default page)
+                                window.location.replace('../Task-Management.html');
+                            } catch (error) {
+                                console.error('Redirect error:', error);
+                                // Fallback redirect methods
+                                try {
+                                    window.location.href = '../Task-Management.html';
+                                } catch (error2) {
+                                    console.error('Fallback redirect error:', error2);
+                                    // Last resort - show manual link
+                                    document.body.innerHTML += '<div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border:2px solid #007bff;border-radius:10px;z-index:9999;color:black;"><h3>Đăng nhập thành công!</h3><p><a href="../Task-Management.html" style="color:#007bff;font-size:18px;">Click vào đây để vào Task Management →</a></p></div>';
+                                }
+                            }
+                        }, 1000);
+
+                    } else {
+                        this.showError(result.message || 'Tên đăng nhập hoặc mật khẩu không đúng');
+                    }
+                } catch (error) {
+                    this.showError('Lỗi kết nối. Vui lòng thử lại sau.');
+                    console.error('Login error:', error);
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            async authenticate(username, password) {
+                try {
+                    console.log('Authenticating with real API...');
+
+                    const response = await fetch('http://localhost:3001/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            password: password,
+                            rememberMe: false
+                        })
+                    });
+
+                    const data = await response.json();
+                    console.log('API response:', data);
+
+                    if (response.ok && data.success) {
+                        // Handle nested data structure from API
+                        const apiData = data.data || data;
+                        const userData = apiData.user;
+
+                        return {
+                            success: true,
+                            token: apiData.token,
+                            user: {
+                                username: userData.username,
+                                fullName: userData.full_name || userData.fullName,
+                                role: userData.role_code || userData.role || (userData.roles && userData.roles[0]),
+                                roles: userData.roles || [userData.role_code || userData.role],
+                                teams: userData.teams || [],
+                                permissions: userData.permissions || []
+                            }
+                        };
+                    } else {
+                        return {
+                            success: false,
+                            message: data.error || 'Đăng nhập thất bại'
+                        };
+                    }
+                } catch (error) {
+                    console.error('Authentication error:', error);
+                    return {
+                        success: false,
+                        message: 'Không thể kết nối đến server. Vui lòng kiểm tra API server.'
+                    };
+                }
+            }
+
+            validateToken(token) {
+                // Simulate token validation - replace with real API
+                // For demo, assume token is valid if it exists
+                if (token) {
+                    this.startSessionTimer();
+                    return true;
+                }
+                return false;
+            }
+
+            startSessionTimer() {
+                this.clearSessionTimer();
+                this.sessionTimer = setTimeout(() => {
+                    this.handleSessionTimeout();
+                }, this.sessionTimeout);
+            }
+
+            clearSessionTimer() {
+                if (this.sessionTimer) {
+                    clearTimeout(this.sessionTimer);
+                    this.sessionTimer = null;
+                }
+            }
+
+            handleSessionTimeout() {
+                alert('Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.');
+                this.logout();
+            }
+
+            setupActivityTracking() {
+                // Reset session timer on user activity
+                const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+                events.forEach(event => {
+                    document.addEventListener(event, () => {
+                        if (localStorage.getItem('authToken')) {
+                            this.startSessionTimer();
+                        }
+                    }, true);
+                });
+            }
+
+            logout() {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('userTeams');
+                localStorage.removeItem('rememberMe');
+                this.clearSessionTimer();
+                window.location.href = 'login.html';
+            }
+
+            showLoading(show) {
+                const btn = document.getElementById('loginBtn');
+                const loading = document.getElementById('loading');
+                
+                if (show) {
+                    btn.disabled = true;
+                    loading.style.display = 'inline';
+                } else {
+                    btn.disabled = false;
+                    loading.style.display = 'none';
+                }
+            }
+
+            showError(message) {
+                const errorDiv = document.getElementById('errorMessage');
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+
+            showSuccess(message) {
+                const successDiv = document.getElementById('successMessage');
+                successDiv.textContent = message;
+                successDiv.style.display = 'block';
+            }
+
+            hideMessages() {
+                document.getElementById('errorMessage').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'none';
+            }
+        }
+
+        // Initialize authentication system
+        const authSystem = new AuthSystem();
+
+        // Forgot password functionality
+        function showForgotPassword() {
+            alert('Tính năng quên mật khẩu sẽ được triển khai trong phiên bản tiếp theo.\n\nDemo accounts:\n- admin/admin123 (Admin)\n- cpo/cpo123 (CPO)\n- pm1/pm123 (PM)\n- po1/po123 (PO)\n- dev1/dev123 (Dev)');
+        }
+    </script>
+</body>
+</html>

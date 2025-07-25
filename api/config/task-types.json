@@ -1,0 +1,170 @@
+{
+  "task_types": [
+    {
+      "id": 1,
+      "type_code": "nvtt",
+      "type_name": "Nhiệm vụ trọng tâm",
+      "type_name_en": "Key Task",
+      "description": "Nhiệm vụ trọng tâm của công ty",
+      "color": "#dc3545",
+      "background_color": "#ffebee",
+      "priority": "high",
+      "requires_approval": true,
+      "is_active": true,
+      "order": 1
+    },
+    {
+      "id": 2,
+      "type_code": "nvkh",
+      "type_name": "Nhiệm vụ kế hoạch",
+      "type_name_en": "Planned Task",
+      "description": "Nhiệm vụ theo kế hoạch đã định",
+      "color": "#007bff",
+      "background_color": "#e3f2fd",
+      "priority": "medium",
+      "requires_approval": true,
+      "is_active": true,
+      "order": 2
+    },
+    {
+      "id": 3,
+      "type_code": "cthd",
+      "type_name": "Chương trình hành động",
+      "type_name_en": "Action Program",
+      "description": "Chương trình hành động cụ thể",
+      "color": "#28a745",
+      "background_color": "#e8f5e8",
+      "priority": "medium",
+      "requires_approval": true,
+      "is_active": true,
+      "order": 3
+    },
+    {
+      "id": 4,
+      "type_code": "tnkh",
+      "type_name": "Tăng năng khả năng",
+      "type_name_en": "Capacity Building",
+      "description": "Nhiệm vụ tăng cường năng lực",
+      "color": "#ffc107",
+      "background_color": "#fff8e1",
+      "priority": "medium",
+      "requires_approval": false,
+      "is_active": true,
+      "order": 4
+    },
+    {
+      "id": 5,
+      "type_code": "netbi",
+      "type_name": "NetBI",
+      "type_name_en": "NetBI",
+      "description": "Nhiệm vụ liên quan đến NetBI",
+      "color": "#6f42c1",
+      "background_color": "#f3e5f5",
+      "priority": "medium",
+      "requires_approval": false,
+      "is_active": true,
+      "order": 5
+    },
+    {
+      "id": 6,
+      "type_code": "support",
+      "type_name": "Hỗ trợ",
+      "type_name_en": "Support",
+      "description": "Nhiệm vụ hỗ trợ khác",
+      "color": "#17a2b8",
+      "background_color": "#e0f7fa",
+      "priority": "low",
+      "requires_approval": false,
+      "is_active": true,
+      "order": 6
+    },
+    {
+      "id": 7,
+      "type_code": "maintenance",
+      "type_name": "Bảo trì",
+      "type_name_en": "Maintenance",
+      "description": "Nhiệm vụ bảo trì hệ thống",
+      "color": "#fd7e14",
+      "background_color": "#fff3e0",
+      "priority": "medium",
+      "requires_approval": false,
+      "is_active": true,
+      "order": 7
+    },
+    {
+      "id": 8,
+      "type_code": "research",
+      "type_name": "Nghiên cứu",
+      "type_name_en": "Research",
+      "description": "Nhiệm vụ nghiên cứu và phát triển",
+      "color": "#e83e8c",
+      "background_color": "#fce4ec",
+      "priority": "low",
+      "requires_approval": false,
+      "is_active": true,
+      "order": 8
+    },
+    {
+      "id": 9,
+      "type_code": "training",
+      "type_name": "Đào tạo",
+      "type_name_en": "Training",
+      "description": "Nhiệm vụ đào tạo và phát triển nhân sự",
+      "color": "#20c997",
+      "background_color": "#e0f2f1",
+      "priority": "medium",
+      "requires_approval": false,
+      "is_active": true,
+      "order": 9
+    },
+    {
+      "id": 10,
+      "type_code": "urgent",
+      "type_name": "Khẩn cấp",
+      "type_name_en": "Urgent",
+      "description": "Nhiệm vụ khẩn cấp cần xử lý ngay",
+      "color": "#dc3545",
+      "background_color": "#ffebee",
+      "priority": "urgent",
+      "requires_approval": true,
+      "is_active": true,
+      "order": 10
+    }
+  ],
+  "priorities": [
+    {
+      "priority_code": "low",
+      "priority_name": "Thấp",
+      "priority_name_en": "Low",
+      "color": "#6c757d",
+      "order": 1
+    },
+    {
+      "priority_code": "medium",
+      "priority_name": "Trung bình",
+      "priority_name_en": "Medium",
+      "color": "#ffc107",
+      "order": 2
+    },
+    {
+      "priority_code": "high",
+      "priority_name": "Cao",
+      "priority_name_en": "High",
+      "color": "#fd7e14",
+      "order": 3
+    },
+    {
+      "priority_code": "urgent",
+      "priority_name": "Khẩn cấp",
+      "priority_name_en": "Urgent",
+      "color": "#dc3545",
+      "order": 4
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2024-12-17",
+    "updated_by": "admin",
+    "description": "KPI TT Cloud System Task Types Configuration"
+  }
+}

@@ -1,0 +1,4 @@
+STT,Username,Full Name,Email,Phone,Role Code,Team Code,Join Date,Is Active,Password
+1,testui1,Test UI User 1,testui1@viettelidc.com,0123456789,DEV,T1,2025-01-01,true,testui123
+2,testui2,Test UI User 2,testui2@viettelidc.com,0987654321,PM,T2,2025-01-01,true,testui123
+3,testui3,Test UI User 3,testui3@viettelidc.com,0111222333,PO,T3,2025-01-01,false,testui123

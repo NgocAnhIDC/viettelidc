@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI TT Cloud - Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/antd/5.12.8/reset.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        /* Layout */
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #1a1a1a;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+            transition: width 0.3s ease;
+            position: relative;
+            z-index: 100;
+        }
+        
+        .sidebar.collapsed {
+            width: 80px;
+        }
+        
+        .sidebar-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 64px;
+            box-sizing: border-box;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .sidebar.collapsed .logo-text {
+            display: none;
+        }
+        
+        .collapse-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .collapse-btn:hover {
+            background: #333;
+        }
+        
+        /* Menu */
+        .menu {
+            padding: 16px 0;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: #333;
+            color: #00ff88;
+        }
+
+        .menu-item.active {
+            background: #333;
+            color: #00ff88;
+            border-left-color: #00ff88;
+        }
+        
+        .menu-item i {
+            width: 20px;
+            margin-right: 12px;
+            text-align: center;
+        }
+        
+        .sidebar.collapsed .menu-item-text {
+            display: none;
+        }
+        
+        .menu-group {
+            margin-top: 8px;
+        }
+        
+        .menu-group-title {
+            padding: 8px 20px;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        
+        .sidebar.collapsed .menu-group-title {
+            display: none;
+        }
+        
+        .submenu {
+            padding-left: 40px;
+        }
+        
+        .sidebar.collapsed .submenu {
+            padding-left: 20px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: #2c2c2c;
+            padding: 16px 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #333;
+            min-height: 64px;
+            box-sizing: border-box;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            color: #ccc;
+        }
+        
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .breadcrumb-separator {
+            margin: 0 8px;
+            color: #d9d9d9;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #00ff88;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a1a1a;
+            font-weight: bold;
+        }
+        
+        /* Content Area */
+        .content {
+            padding: 40px;
+            flex: 1;
+            background: #1a1a1a;
+        }
+        
+        /* Cards */
+        .card {
+            background: #454647;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 0.5px solid #00ff88;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            border-color: #00ff88;
+        }
+
+        .card:hover .kpi-card {
+            background: #6e6e6e;
+        }
+
+        .card:hover .kpi-value {
+            color: #ffffff;
+        }
+
+        .card:hover .kpi-label {
+            color: #ffffff;
+        }
+
+        .card:hover .kpi-icon {
+            color: #ffffff;
+        }
+        
+        .card-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #312F30;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+        
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            gap: 24px;
+        }
+        
+        .grid-1 {
+            grid-template-columns: 1fr;
+        }
+
+        .grid-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .grid-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .grid-4 {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+
+        .grid-5 {
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        }
+
+        /* Card Settings */
+        .card-settings {
+            position: relative;
+            display: inline-block;
+        }
+
+        .card-settings-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 16px;
+            min-width: 250px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+        }
+
+        .card-settings-dropdown.show {
+            display: block;
+        }
+
+        .settings-header {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .settings-item:hover {
+            color: #fff;
+        }
+
+        .settings-item input[type="checkbox"] {
+            margin-right: 8px;
+            accent-color: #00ff88;
+        }
+
+        .settings-item span {
+            user-select: none;
+        }
+
+        .settings-divider {
+            height: 1px;
+            background: #444;
+            margin: 12px 0;
+        }
+
+        .settings-divider {
+            height: 1px;
+            background: #444;
+            margin: 12px 0;
+        }
+        
+        /* KPI Cards */
+        .kpi-card {
+            text-align: center;
+            padding: 40px 30px;
+            background: #454647;
+            color: #fff;
+            border-radius: 12px;
+        }
+
+        .kpi-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #00ff88;
+        }
+
+        .kpi-value {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .kpi-label {
+            font-size: 16px;
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Performance Colors */
+        .performance-good .kpi-progress-bar {
+            background: linear-gradient(90deg, #00ff88, #00e676);
+        }
+
+        .performance-warning .kpi-progress-bar {
+            background: linear-gradient(90deg, #ffa940, #ff9800);
+        }
+
+        .performance-poor .kpi-progress-bar {
+            background: linear-gradient(90deg, #ff4d4f, #f44336);
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 16px;
+        }
+        
+        /* Rankings */
+        .ranking-list {
+            list-style: none;
+        }
+        
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+        
+        .ranking-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .ranking-number.top-3 {
+            background: #00ff88;
+            color: #1a1a1a;
+        }
+        
+        .ranking-info {
+            flex: 1;
+        }
+        
+        .ranking-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #fff;
+        }
+
+        .ranking-score {
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background: #6e6e6e;
+            border-color: #6e6e6e;
+            color: #ffffff;
+        }
+
+        .btn-primary {
+            background: #00ff88;
+            border-color: #00ff88;
+            color: #1a1a1a;
+        }
+
+        .btn-primary:hover {
+            background: #00e676;
+            border-color: #00e676;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+            }
+            
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 12px 16px;
+            }
+
+            .content {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-chart-line" style="color: #00ff88; margin-right: 8px;"></i>
+                    <span class="logo-text">KPI TT Cloud</span>
+                </div>
+                <button class="collapse-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <nav class="menu">
+                <a href="#" class="menu-item active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span class="menu-item-text">Dashboard</span>
+                </a>
+                
+                <a href="#" class="menu-item">
+                    <i class="fas fa-tasks"></i>
+                    <span class="menu-item-text">Quản lý Công việc</span>
+                </a>
+                
+                <a href="#" class="menu-item">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span class="menu-item-text">Quản lý Doanh thu</span>
+                </a>
+                
+                <a href="#" class="menu-item">
+                    <i class="fas fa-star"></i>
+                    <span class="menu-item-text">Chất lượng Dịch vụ</span>
+                </a>
+                
+                <a href="#" class="menu-item">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span class="menu-item-text">Đào tạo</span>
+                </a>
+                
+                <a href="#" class="menu-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span class="menu-item-text">Tuân thủ</span>
+                </a>
+                
+                <a href="#" class="menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span class="menu-item-text">Báo cáo</span>
+                </a>
+                
+                <div class="menu-group">
+                    <div class="menu-group-title">Quản trị</div>
+                    <a href="#" class="menu-item submenu">
+                        <i class="fas fa-users"></i>
+                        <span class="menu-item-text">Quản lý User</span>
+                    </a>
+                    <a href="#" class="menu-item submenu">
+                        <i class="fas fa-cog"></i>
+                        <span class="menu-item-text">Cấu hình Hệ thống</span>
+                    </a>
+                    <a href="#" class="menu-item submenu">
+                        <i class="fas fa-sliders-h"></i>
+                        <span class="menu-item-text">Cấu hình KPI</span>
+                    </a>
+                </div>
+                
+                <a href="#" class="menu-item">
+                    <i class="fas fa-user"></i>
+                    <span class="menu-item-text">Hồ sơ</span>
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="breadcrumb">
+                    <span class="breadcrumb-item">
+                        <i class="fas fa-home"></i>
+                    </span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item">Dashboard</span>
+                </div>
+                
+                <div class="user-info">
+                    <span>Nguyễn Văn A</span>
+                    <div class="user-avatar">A</div>
+                </div>
+            </header>
+            
+            <!-- Content -->
+            <main class="content">
+                <!-- Time Filter and Card Settings -->
+                <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+                    <div class="card-settings">
+                        <button class="btn" id="cardSettingsBtn" onclick="toggleCardSettings()">
+                            <i class="fas fa-cog"></i> Cài đặt hiển thị
+                        </button>
+                        <div class="card-settings-dropdown" id="cardSettingsDropdown">
+                            <div class="settings-header">Chọn KPI Cards hiển thị:</div>
+                            <label class="settings-item">
+                                <input type="checkbox" id="toggle-revenue" checked onchange="toggleCard('revenue')">
+                                <span>KPI Doanh thu</span>
+                            </label>
+                            <label class="settings-item">
+                                <input type="checkbox" id="toggle-newProducts" checked onchange="toggleCard('newProducts')">
+                                <span>Sản phẩm mới</span>
+                            </label>
+                            <label class="settings-item">
+                                <input type="checkbox" id="toggle-newFeatures" checked onchange="toggleCard('newFeatures')">
+                                <span>Tính năng mới</span>
+                            </label>
+                            <label class="settings-item">
+                                <input type="checkbox" id="toggle-violations" checked onchange="toggleCard('violations')">
+                                <span>Vi phạm quy trình</span>
+                            </label>
+                            <label class="settings-item">
+                                <input type="checkbox" id="toggle-incidents" checked onchange="toggleCard('incidents')">
+                                <span>Sự cố nghiêm trọng</span>
+                            </label>
+
+                            <div class="settings-divider"></div>
+
+                            <div class="settings-header">Chọn Charts hiển thị:</div>
+                            <label class="settings-item">
+                                <input type="checkbox" id="toggle-chart-newProducts" checked onchange="toggleChart('newProducts')">
+                                <span>Chart Sản phẩm mới</span>
+                            </label>
+                            <label class="settings-item">
+                                <input type="checkbox" id="toggle-chart-revenue" checked onchange="toggleChart('revenue')">
+                                <span>Chart Doanh thu</span>
+                            </label>
+                            <label class="settings-item">
+                                <input type="checkbox" id="toggle-chart-violations" checked onchange="toggleChart('violations')">
+                                <span>Chart Vi phạm quy trình</span>
+                            </label>
+                            <label class="settings-item">
+                                <input type="checkbox" id="toggle-chart-incidents" checked onchange="toggleChart('incidents')">
+                                <span>Chart Sự cố nghiêm trọng</span>
+                            </label>
+
+                            <div class="settings-divider"></div>
+
+                            <div class="settings-header">Chọn Tables hiển thị:</div>
+                            <label class="settings-item">
+                                <input type="checkbox" id="toggle-table-teams" checked onchange="toggleTable('teams')">
+                                <span>Bảng xếp hạng Team</span>
+                            </label>
+                            <label class="settings-item">
+                                <input type="checkbox" id="toggle-table-members" checked onchange="toggleTable('members')">
+                                <span>Bảng xếp hạng Member</span>
+                            </label>
+
+                            <div class="settings-divider"></div>
+                            <button class="btn btn-primary" onclick="resetDisplaySettings()" style="width: 100%; margin-top: 8px;">
+                                <i class="fas fa-undo"></i> Khôi phục mặc định
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 16px;">
+                        <select class="btn" id="dashboardTimeFilter" onchange="updateDashboardData()">
+                            <option value="monthly" selected>Theo tháng</option>
+                            <option value="quarterly">Theo quý</option>
+                            <option value="yearly">Theo năm</option>
+                        </select>
+                        <select class="btn" id="dashboardPeriodFilter" onchange="updateDashboardData()">
+                            <option value="2024-12" selected>Tháng 12/2024</option>
+                            <option value="2024-11">Tháng 11/2024</option>
+                            <option value="2024-10">Tháng 10/2024</option>
+                            <option value="2024-09">Tháng 9/2024</option>
+                            <option value="Q4-2024">Quý 4/2024</option>
+                            <option value="Q3-2024">Quý 3/2024</option>
+                            <option value="Q2-2024">Quý 2/2024</option>
+                            <option value="Q1-2024">Quý 1/2024</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- KPI Overview -->
+                <div class="grid grid-5" id="kpiGrid" style="margin-bottom: 40px;">
+                    <div class="card" id="card-revenue">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="kpi-value">92%</div>
+                            <div class="kpi-label">Doanh thu mục tiêu</div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="card-newProducts">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="fas fa-cube"></i>
+                            </div>
+                            <div class="kpi-value">45</div>
+                            <div class="kpi-label">Sản phẩm mới</div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="card-newFeatures">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <div class="kpi-value">97</div>
+                            <div class="kpi-label">Tính năng mới</div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="card-violations">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="kpi-value">3</div>
+                            <div class="kpi-label">Vi phạm quy trình</div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="card-incidents">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="kpi-value">2</div>
+                            <div class="kpi-label">Sự cố nghiêm trọng</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid grid-2" id="chartsGrid1" style="margin-bottom: 24px;">
+                    <div class="card" id="chart-newProducts">
+                        <div class="card-header">
+                            <h3 class="card-title">Sản phẩm mới theo thời gian</h3>
+                            <div>
+                                <select class="btn" id="taskTimeFilter">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly" selected>Monthly</option>
+                                    <option value="quarterly">Quarterly</option>
+                                </select>
+                                <button class="btn" onclick="exportChart('taskChart')">
+                                    <i class="fas fa-download"></i> Export
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="taskChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="chart-revenue">
+                        <div class="card-header">
+                            <h3 class="card-title">KPI Doanh thu theo thời gian</h3>
+                            <div>
+                                <select class="btn" id="revenueTimeFilter">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly" selected>Monthly</option>
+                                    <option value="quarterly">Quarterly</option>
+                                </select>
+                                <button class="btn" onclick="exportChart('revenueChart')">
+                                    <i class="fas fa-download"></i> Export
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Charts Section -->
+                <div class="grid grid-2" id="chartsGrid2" style="margin-bottom: 24px;">
+                    <div class="card" id="chart-violations">
+                        <div class="card-header">
+                            <h3 class="card-title">Vi phạm quy trình theo thời gian</h3>
+                            <div>
+                                <select class="btn" id="complianceTimeFilter">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly" selected>Monthly</option>
+                                    <option value="quarterly">Quarterly</option>
+                                </select>
+                                <button class="btn" onclick="exportChart('complianceChart')">
+                                    <i class="fas fa-download"></i> Export
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="complianceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="chart-incidents">
+                        <div class="card-header">
+                            <h3 class="card-title">Sự cố nghiêm trọng theo thời gian</h3>
+                            <div>
+                                <select class="btn" id="qualityTimeFilter">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly" selected>Monthly</option>
+                                    <option value="quarterly">Quarterly</option>
+                                </select>
+                                <button class="btn" onclick="exportChart('qualityChart')">
+                                    <i class="fas fa-download"></i> Export
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="qualityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rankings Section -->
+                <div class="grid grid-2" id="tablesGrid">
+                    <div class="card" id="table-teams">
+                        <div class="card-header">
+                            <h3 class="card-title">Team Rankings</h3>
+                            <button class="btn" onclick="drillDownTeam()">
+                                <i class="fas fa-search-plus"></i> Chi tiết
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <ul class="ranking-list">
+                                <li class="ranking-item">
+                                    <div class="ranking-number top-3">1</div>
+                                    <div class="ranking-info">
+                                        <div class="ranking-name">Team 1 - Public Cloud Vmware</div>
+                                        <div class="ranking-score">Điểm KPI: 95.2</div>
+                                    </div>
+                                </li>
+                                <li class="ranking-item">
+                                    <div class="ranking-number top-3">2</div>
+                                    <div class="ranking-info">
+                                        <div class="ranking-name">Team 6 - DevOps</div>
+                                        <div class="ranking-score">Điểm KPI: 92.8</div>
+                                    </div>
+                                </li>
+                                <li class="ranking-item">
+                                    <div class="ranking-number top-3">3</div>
+                                    <div class="ranking-info">
+                                        <div class="ranking-name">Team 11 - ATM</div>
+                                        <div class="ranking-score">Điểm KPI: 89.5</div>
+                                    </div>
+                                </li>
+                                <li class="ranking-item">
+                                    <div class="ranking-number">4</div>
+                                    <div class="ranking-info">
+                                        <div class="ranking-name">Team 3 - Private Cloud</div>
+                                        <div class="ranking-score">Điểm KPI: 87.1</div>
+                                    </div>
+                                </li>
+                                <li class="ranking-item">
+                                    <div class="ranking-number">5</div>
+                                    <div class="ranking-info">
+                                        <div class="ranking-name">Team 8 - DB</div>
+                                        <div class="ranking-score">Điểm KPI: 85.3</div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card" id="table-members">
+                        <div class="card-header">
+                            <h3 class="card-title">Member Rankings (Team 1)</h3>
+                            <button class="btn" onclick="drillDownMember()">
+                                <i class="fas fa-search-plus"></i> Chi tiết
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <ul class="ranking-list">
+                                <li class="ranking-item">
+                                    <div class="ranking-number top-3">1</div>
+                                    <div class="ranking-info">
+                                        <div class="ranking-name">Nguyễn Văn A</div>
+                                        <div class="ranking-score">Điểm KPI: 98.5 - KI: A+</div>
+                                    </div>
+                                </li>
+                                <li class="ranking-item">
+                                    <div class="ranking-number top-3">2</div>
+                                    <div class="ranking-info">
+                                        <div class="ranking-name">Trần Thị B</div>
+                                        <div class="ranking-score">Điểm KPI: 94.2 - KI: A</div>
+                                    </div>
+                                </li>
+                                <li class="ranking-item">
+                                    <div class="ranking-number top-3">3</div>
+                                    <div class="ranking-info">
+                                        <div class="ranking-name">Lê Văn C</div>
+                                        <div class="ranking-score">Điểm KPI: 91.8 - KI: A</div>
+                                    </div>
+                                </li>
+                                <li class="ranking-item">
+                                    <div class="ranking-number">4</div>
+                                    <div class="ranking-info">
+                                        <div class="ranking-name">Phạm Thị D</div>
+                                        <div class="ranking-score">Điểm KPI: 88.7 - KI: B</div>
+                                    </div>
+                                </li>
+                                <li class="ranking-item">
+                                    <div class="ranking-number">5</div>
+                                    <div class="ranking-info">
+                                        <div class="ranking-name">Hoàng Văn E</div>
+                                        <div class="ranking-score">Điểm KPI: 85.1 - KI: B</div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar Toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // Chart.js Configuration
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            }
+        };
+
+        // New Products Chart
+        const taskCtx = document.getElementById('taskChart').getContext('2d');
+        const taskChart = new Chart(taskCtx, {
+            type: 'line',
+            data: {
+                labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+                datasets: [{
+                    label: 'Sản phẩm mới',
+                    data: [35, 38, 42, 45, 48, 45, 47, 49, 46, 48, 45, 50],
+                    borderColor: '#00ff88',
+                    backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: chartOptions
+        });
+
+        // Revenue KPI Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        const revenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+                datasets: [{
+                    label: 'KPI Doanh thu',
+                    data: [80, 85, 88, 92, 89, 91, 94, 92, 95, 93, 92, 96],
+                    borderColor: '#00ff88',
+                    backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: chartOptions
+        });
+
+        // Compliance Chart
+        const complianceCtx = document.getElementById('complianceChart').getContext('2d');
+        const complianceChart = new Chart(complianceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+                datasets: [{
+                    label: 'Vi phạm quy trình',
+                    data: [5, 3, 7, 2, 4, 6, 3, 1, 4, 2, 3, 5],
+                    backgroundColor: 'rgba(255, 77, 79, 0.8)',
+                    borderColor: '#ff4d4f',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...chartOptions,
+                scales: {
+                    ...chartOptions.scales,
+                    y: {
+                        ...chartOptions.scales.y,
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Số vi phạm',
+                            color: '#ccc'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Quality Chart
+        const qualityCtx = document.getElementById('qualityChart').getContext('2d');
+        const qualityChart = new Chart(qualityCtx, {
+            type: 'bar',
+            data: {
+                labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+                datasets: [{
+                    label: 'Sự cố nghiêm trọng',
+                    data: [3, 1, 4, 0, 2, 3, 1, 0, 2, 1, 2, 3],
+                    backgroundColor: 'rgba(255, 169, 64, 0.8)',
+                    borderColor: '#ffa940',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...chartOptions,
+                scales: {
+                    ...chartOptions.scales,
+                    y: {
+                        ...chartOptions.scales.y,
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Số sự cố',
+                            color: '#ccc'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Export Chart Function
+        function exportChart(chartId) {
+            let chart;
+            switch(chartId) {
+                case 'taskChart':
+                    chart = taskChart;
+                    break;
+                case 'revenueChart':
+                    chart = revenueChart;
+                    break;
+                case 'complianceChart':
+                    chart = complianceChart;
+                    break;
+                case 'qualityChart':
+                    chart = qualityChart;
+                    break;
+                default:
+                    chart = taskChart;
+            }
+            const url = chart.toBase64Image();
+            const link = document.createElement('a');
+            link.download = chartId + '.png';
+            link.href = url;
+            link.click();
+        }
+
+        // Update Dashboard Data based on filters
+        function updateDashboardData() {
+            const timeFilter = document.getElementById('dashboardTimeFilter').value;
+            const periodFilter = document.getElementById('dashboardPeriodFilter').value;
+
+            // Update period filter options based on time filter
+            updatePeriodOptions(timeFilter);
+
+            // Sample data for different periods
+            const sampleData = {
+                'monthly': {
+                    '2024-12': { revenue: 92, newProducts: 45, newFeatures: 97, violations: 3, incidents: 2 },
+                    '2024-11': { revenue: 89, newProducts: 42, newFeatures: 96, violations: 5, incidents: 1 },
+                    '2024-10': { revenue: 94, newProducts: 48, newFeatures: 97, violations: 2, incidents: 3 },
+                    '2024-09': { revenue: 87, newProducts: 39, newFeatures: 100, violations: 4, incidents: 1 }
+                },
+                'quarterly': {
+                    'Q4-2024': { revenue: 91, newProducts: 135, newFeatures: 290, violations: 10, incidents: 6 },
+                    'Q3-2024': { revenue: 88, newProducts: 127, newFeatures: 285, violations: 12, incidents: 8 },
+                    'Q2-2024': { revenue: 85, newProducts: 119, newFeatures: 279, violations: 15, incidents: 5 },
+                    'Q1-2024': { revenue: 83, newProducts: 116, newFeatures: 271, violations: 18, incidents: 7 }
+                },
+                'yearly': {
+                    '2024': { revenue: 87, newProducts: 497, newFeatures: 1125, violations: 55, incidents: 26 },
+                    '2023': { revenue: 84, newProducts: 463, newFeatures: 1080, violations: 62, incidents: 31 }
+                }
+            };
+
+            const data = sampleData[timeFilter][periodFilter] || sampleData[timeFilter]['2024-12'];
+
+            // Update KPI values (order: revenue, newProducts, newFeatures, violations, incidents)
+            document.querySelectorAll('.kpi-card .kpi-value')[0].textContent = data.revenue + '%';
+            document.querySelectorAll('.kpi-card .kpi-value')[1].textContent = data.newProducts;
+            document.querySelectorAll('.kpi-card .kpi-value')[2].textContent = data.newFeatures;
+            document.querySelectorAll('.kpi-card .kpi-value')[3].textContent = data.violations;
+            document.querySelectorAll('.kpi-card .kpi-value')[4].textContent = data.incidents;
+        }
+
+        function updatePeriodOptions(timeFilter) {
+            const periodSelect = document.getElementById('dashboardPeriodFilter');
+            periodSelect.innerHTML = '';
+
+            if (timeFilter === 'monthly') {
+                const months = [
+                    { value: '2024-12', text: 'Tháng 12/2024' },
+                    { value: '2024-11', text: 'Tháng 11/2024' },
+                    { value: '2024-10', text: 'Tháng 10/2024' },
+                    { value: '2024-09', text: 'Tháng 9/2024' },
+                    { value: '2024-08', text: 'Tháng 8/2024' },
+                    { value: '2024-07', text: 'Tháng 7/2024' }
+                ];
+                months.forEach(month => {
+                    const option = document.createElement('option');
+                    option.value = month.value;
+                    option.textContent = month.text;
+                    if (month.value === '2024-12') option.selected = true;
+                    periodSelect.appendChild(option);
+                });
+            } else if (timeFilter === 'quarterly') {
+                const quarters = [
+                    { value: 'Q4-2024', text: 'Quý 4/2024' },
+                    { value: 'Q3-2024', text: 'Quý 3/2024' },
+                    { value: 'Q2-2024', text: 'Quý 2/2024' },
+                    { value: 'Q1-2024', text: 'Quý 1/2024' }
+                ];
+                quarters.forEach(quarter => {
+                    const option = document.createElement('option');
+                    option.value = quarter.value;
+                    option.textContent = quarter.text;
+                    if (quarter.value === 'Q4-2024') option.selected = true;
+                    periodSelect.appendChild(option);
+                });
+            } else if (timeFilter === 'yearly') {
+                const years = [
+                    { value: '2024', text: 'Năm 2024' },
+                    { value: '2023', text: 'Năm 2023' },
+                    { value: '2022', text: 'Năm 2022' }
+                ];
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year.value;
+                    option.textContent = year.text;
+                    if (year.value === '2024') option.selected = true;
+                    periodSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Drill Down Functions
+        function drillDownTeam() {
+            alert('Drill down to Team details - Navigate to Team Management page');
+        }
+
+        function drillDownMember() {
+            alert('Drill down to Member details - Navigate to Individual KPI page');
+        }
+
+        // Time Filter Change Handlers
+        document.getElementById('taskTimeFilter').addEventListener('change', function(e) {
+            // Update task chart based on selected time period
+            console.log('Task time filter changed to:', e.target.value);
+        });
+
+        document.getElementById('revenueTimeFilter').addEventListener('change', function(e) {
+            // Update revenue chart based on selected time period
+            console.log('Revenue time filter changed to:', e.target.value);
+        });
+
+        // Menu Item Click Handlers
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // Remove active class from all items
+                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+
+                // Add active class to clicked item
+                this.classList.add('active');
+
+                // Update breadcrumb
+                const text = this.querySelector('.menu-item-text').textContent;
+                document.querySelector('.breadcrumb-item:last-child').textContent = text;
+            });
+        });
+
+        // Card Settings Functions
+        function toggleCardSettings() {
+            const dropdown = document.getElementById('cardSettingsDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function toggleCard(cardType) {
+            const card = document.getElementById('card-' + cardType);
+            const checkbox = document.getElementById('toggle-' + cardType);
+
+            if (checkbox.checked) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+
+            // Save card visibility settings to localStorage
+            saveCardSettings();
+
+            // Update grid layout based on visible cards
+            updateGridLayout();
+        }
+
+        function updateGridLayout() {
+            const grid = document.getElementById('kpiGrid');
+            const visibleCards = Array.from(grid.children).filter(card =>
+                card.style.display !== 'none'
+            );
+
+            const count = visibleCards.length;
+
+            // Update grid class based on number of visible cards
+            grid.className = grid.className.replace(/grid-\d+/, '');
+            if (count <= 1) {
+                grid.classList.add('grid-1');
+            } else if (count <= 2) {
+                grid.classList.add('grid-2');
+            } else if (count <= 3) {
+                grid.classList.add('grid-3');
+            } else if (count <= 4) {
+                grid.classList.add('grid-4');
+            } else {
+                grid.classList.add('grid-5');
+            }
+        }
+
+        function toggleChart(chartType) {
+            const chart = document.getElementById('chart-' + chartType);
+            const checkbox = document.getElementById('toggle-chart-' + chartType);
+
+            if (checkbox.checked) {
+                chart.style.display = 'block';
+            } else {
+                chart.style.display = 'none';
+            }
+
+            // Save chart visibility settings to localStorage
+            saveChartSettings();
+
+            // Update chart grids layout
+            updateChartGrids();
+        }
+
+        function toggleTable(tableType) {
+            const table = document.getElementById('table-' + tableType);
+            const checkbox = document.getElementById('toggle-table-' + tableType);
+
+            if (checkbox.checked) {
+                table.style.display = 'block';
+            } else {
+                table.style.display = 'none';
+            }
+
+            // Save table visibility settings to localStorage
+            saveTableSettings();
+
+            // Update table grid layout
+            updateTableGrid();
+        }
+
+        function updateChartGrids() {
+            // Update first chart grid
+            const grid1 = document.getElementById('chartsGrid1');
+            const visibleCharts1 = Array.from(grid1.children).filter(card =>
+                card.style.display !== 'none'
+            );
+
+            if (visibleCharts1.length === 0) {
+                grid1.style.display = 'none';
+            } else {
+                grid1.style.display = 'grid';
+                grid1.className = grid1.className.replace(/grid-\d+/, '');
+                grid1.classList.add(visibleCharts1.length === 1 ? 'grid-1' : 'grid-2');
+            }
+
+            // Update second chart grid
+            const grid2 = document.getElementById('chartsGrid2');
+            const visibleCharts2 = Array.from(grid2.children).filter(card =>
+                card.style.display !== 'none'
+            );
+
+            if (visibleCharts2.length === 0) {
+                grid2.style.display = 'none';
+            } else {
+                grid2.style.display = 'grid';
+                grid2.className = grid2.className.replace(/grid-\d+/, '');
+                grid2.classList.add(visibleCharts2.length === 1 ? 'grid-1' : 'grid-2');
+            }
+        }
+
+        function updateTableGrid() {
+            const grid = document.getElementById('tablesGrid');
+            const visibleTables = Array.from(grid.children).filter(card =>
+                card.style.display !== 'none'
+            );
+
+            if (visibleTables.length === 0) {
+                grid.style.display = 'none';
+            } else {
+                grid.style.display = 'grid';
+                grid.className = grid.className.replace(/grid-\d+/, '');
+                grid.classList.add(visibleTables.length === 1 ? 'grid-1' : 'grid-2');
+            }
+        }
+
+        // Settings Storage Functions
+        function saveCardSettings() {
+            const cardSettings = {};
+            const cardTypes = ['revenue', 'newProducts', 'newFeatures', 'violations', 'incidents'];
+
+            cardTypes.forEach(cardType => {
+                const checkbox = document.getElementById('toggle-' + cardType);
+                cardSettings[cardType] = checkbox.checked;
+            });
+
+            localStorage.setItem('dashboardCardSettings', JSON.stringify(cardSettings));
+        }
+
+        function saveChartSettings() {
+            const chartSettings = {};
+            const chartTypes = ['newProducts', 'revenue', 'violations', 'incidents'];
+
+            chartTypes.forEach(chartType => {
+                const checkbox = document.getElementById('toggle-chart-' + chartType);
+                if (checkbox) {
+                    chartSettings[chartType] = checkbox.checked;
+                }
+            });
+
+            localStorage.setItem('dashboardChartSettings', JSON.stringify(chartSettings));
+        }
+
+        function saveTableSettings() {
+            const tableSettings = {};
+            const tableTypes = ['teams', 'members'];
+
+            tableTypes.forEach(tableType => {
+                const checkbox = document.getElementById('toggle-table-' + tableType);
+                if (checkbox) {
+                    tableSettings[tableType] = checkbox.checked;
+                }
+            });
+
+            localStorage.setItem('dashboardTableSettings', JSON.stringify(tableSettings));
+        }
+
+        function loadCardSettings() {
+            const savedSettings = localStorage.getItem('dashboardCardSettings');
+            if (savedSettings) {
+                const cardSettings = JSON.parse(savedSettings);
+
+                Object.keys(cardSettings).forEach(cardType => {
+                    const checkbox = document.getElementById('toggle-' + cardType);
+                    const card = document.getElementById('card-' + cardType);
+
+                    if (checkbox && card) {
+                        checkbox.checked = cardSettings[cardType];
+                        card.style.display = cardSettings[cardType] ? 'block' : 'none';
+                    }
+                });
+
+                updateGridLayout();
+            }
+        }
+
+        function loadChartSettings() {
+            const savedSettings = localStorage.getItem('dashboardChartSettings');
+            if (savedSettings) {
+                const chartSettings = JSON.parse(savedSettings);
+
+                Object.keys(chartSettings).forEach(chartType => {
+                    const checkbox = document.getElementById('toggle-chart-' + chartType);
+                    const chart = document.getElementById('chart-' + chartType);
+
+                    if (checkbox && chart) {
+                        checkbox.checked = chartSettings[chartType];
+                        chart.style.display = chartSettings[chartType] ? 'block' : 'none';
+                    }
+                });
+
+                updateChartGrids();
+            }
+        }
+
+        function loadTableSettings() {
+            const savedSettings = localStorage.getItem('dashboardTableSettings');
+            if (savedSettings) {
+                const tableSettings = JSON.parse(savedSettings);
+
+                Object.keys(tableSettings).forEach(tableType => {
+                    const checkbox = document.getElementById('toggle-table-' + tableType);
+                    const table = document.getElementById('table-' + tableType);
+
+                    if (checkbox && table) {
+                        checkbox.checked = tableSettings[tableType];
+                        table.style.display = tableSettings[tableType] ? 'block' : 'none';
+                    }
+                });
+
+                updateTableGrid();
+            }
+        }
+
+        function resetDisplaySettings() {
+            // Reset all cards to visible
+            const cardTypes = ['revenue', 'newProducts', 'newFeatures', 'violations', 'incidents'];
+            cardTypes.forEach(cardType => {
+                const checkbox = document.getElementById('toggle-' + cardType);
+                const card = document.getElementById('card-' + cardType);
+
+                if (checkbox && card) {
+                    checkbox.checked = true;
+                    card.style.display = 'block';
+                }
+            });
+
+            // Reset all charts to visible
+            const chartTypes = ['newProducts', 'revenue', 'violations', 'incidents'];
+            chartTypes.forEach(chartType => {
+                const checkbox = document.getElementById('toggle-chart-' + chartType);
+                const chart = document.getElementById('chart-' + chartType);
+
+                if (checkbox && chart) {
+                    checkbox.checked = true;
+                    chart.style.display = 'block';
+                }
+            });
+
+            // Reset all tables to visible
+            const tableTypes = ['teams', 'members'];
+            tableTypes.forEach(tableType => {
+                const checkbox = document.getElementById('toggle-table-' + tableType);
+                const table = document.getElementById('table-' + tableType);
+
+                if (checkbox && table) {
+                    checkbox.checked = true;
+                    table.style.display = 'block';
+                }
+            });
+
+            // Clear localStorage
+            localStorage.removeItem('dashboardCardSettings');
+            localStorage.removeItem('dashboardChartSettings');
+            localStorage.removeItem('dashboardTableSettings');
+
+            // Update layouts
+            updateGridLayout();
+            updateChartGrids();
+            updateTableGrid();
+
+            // Close dropdown
+            document.getElementById('cardSettingsDropdown').classList.remove('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const settings = document.querySelector('.card-settings');
+            const dropdown = document.getElementById('cardSettingsDropdown');
+
+            if (!settings.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Initialize grid layout and load saved settings
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved settings first
+            loadCardSettings();
+            loadChartSettings();
+            loadTableSettings();
+
+            // Then update layouts
+            updateGridLayout();
+            updateChartGrids();
+            updateTableGrid();
+        });
+    </script>
+</body>
+</html>
